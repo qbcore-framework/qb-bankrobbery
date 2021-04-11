@@ -130,7 +130,7 @@ Citizen.CreateThread(function()
                                     DrawMarker(2, Config.SmallBanks[closestBank]["lockers"][k].x, Config.SmallBanks[closestBank]["lockers"][k].y, Config.SmallBanks[closestBank]["lockers"][k].z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.05, 255, 255, 255, 255, false, false, false, 1, false, false, false)
                                     if lockerDist < 0.5 then
                                         DrawText3Ds(Config.SmallBanks[closestBank]["lockers"][k].x, Config.SmallBanks[closestBank]["lockers"][k].y, Config.SmallBanks[closestBank]["lockers"][k].z + 0.3, '[E] Break open the safe')
-                                        if IsControlJustPressed(0, Keys["E"]) then
+                                        if IsControlJustPressed(0, 38) then
                                             if CurrentCops >= Config.MinimumFleecaPolice then
                                                 openLocker(closestBank, k)
                                             else
