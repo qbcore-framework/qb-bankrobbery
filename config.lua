@@ -486,7 +486,7 @@ Config.BigBanks = {
                 ["y"] = 6475.36,
                 ["z"] = 31.62,
                 ["isOpened"] = false,
-                ["doorId"] = 82,
+                ["doorId"] = 86,
             },
         },
         ["camId"] = 26,
