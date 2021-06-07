@@ -390,3 +390,10 @@ QBCore.Functions.CreateUseableItem("security_card_02", function(source, item)
         TriggerClientEvent("qb-bankrobbery:UseBankcardB", source)
     end
 end)
+
+QBCore.Functions.CreateUseableItem("electronickit", function(source, item)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if Player.Functions.GetItemByName('electronickit') ~= nil then
+        TriggerClientEvent("electronickit:UseElectronickit", source)
+    end
+end)
