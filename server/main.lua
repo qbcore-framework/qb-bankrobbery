@@ -93,11 +93,11 @@ AddEventHandler('qb-bankrobbery:server:recieveItem', function(type)
                 --     ply.Functions.AddItem(item.item, itemAmount)
                 --     TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[item.item], "add")
                 -- elseif Config.RewardTypes[itemType].type == "money" then
-                    local moneyAmount = math.random(2300, 3200)
-                    -- local info = {
-                    --     worth = math.random(2000, 4000)
-                    -- }
-                    ply.Functions.AddItem('markedbills', moneyAmount)
+                    --local moneyAmount = math.random(2300, 3200)
+                    local info = {
+                        worth = math.random(2300, 3200)
+                    }
+                    ply.Functions.AddItem('markedbills', math.random(2,3), false, info)
                     TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['markedbills'], "add")
                 -- end
             else
