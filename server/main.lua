@@ -231,17 +231,24 @@ end)
 RegisterServerEvent('qb-bankrobbery:server:SetSmallbankTimeout')
 AddEventHandler('qb-bankrobbery:server:SetSmallbankTimeout', function(BankId)
     if not robberyBusy then
-        SetTimeout(60 * (60 * 1000), function()
-            Config.SmallBanks[BankId]["isOpened"] = false
-            for k, v in pairs(Config.SmallBanks[BankId]["lockers"]) do
-                Config.SmallBanks[BankId]["lockers"][k]["isOpened"] = false
-                Config.SmallBanks[BankId]["lockers"][k]["isBusy"] = false
-            end
-            timeOut = false
-            robberyBusy = false
-            TriggerClientEvent('qb-bankrobbery:client:ResetFleecaLockers', -1, BankId)
-            TriggerEvent('qb-banking:server:SetBankClosed', BankId, false)
-        end)
+        if not timeOut then
+            timeOut = true
+            Citizen.CreateThread(function()
+                Citizen.Wait(Config.FleecaTimeout)
+                timeOut = false
+                robberyBusy = false
+
+                for k, v in pairs(Config.SmallBanks[BankId]["lockers"]) do
+                    Config.SmallBanks[BankId]["lockers"][k]["isOpened"] = false
+                    Config.SmallBanks[BankId]["lockers"][k]["isBusy"] = false
+                end
+
+                timeOut = false
+                robberyBusy = false
+            	TriggerClientEvent('qb-bankrobbery:client:ResetFleecaLockers', -1, BankId)
+            	TriggerEvent('qb-banking:server:SetBankClosed', BankId, false)
+            end)
+	end
     end
 end)
 
