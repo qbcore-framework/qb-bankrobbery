@@ -44,6 +44,7 @@ end)
 
 RegisterNetEvent("QBCore:Client:OnPlayerLoaded")
 AddEventHandler("QBCore:Client:OnPlayerLoaded", function()
+    PaletoDoor()
     PlayerJob = QBCore.Functions.GetPlayerData().job
     QBCore.Functions.TriggerCallback('qb-bankrobbery:server:GetConfig', function(config)
         Config = config
@@ -327,6 +328,7 @@ function ResetBankDoors()
         end
     end
     if not Config.BigBanks["paleto"]["isOpened"] then
+        TriggerServerEvent('qb-doorlock:server:updateState', 85, false)
         local paletoObject = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
         SetEntityHeading(paletoObject, Config.BigBanks["paleto"]["heading"].closed)
     else
