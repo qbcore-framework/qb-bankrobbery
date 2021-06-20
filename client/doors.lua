@@ -1,54 +1,20 @@
-Citizen.CreateThread(function()
-    while true do
-        local ped = PlayerPedId()
-        local pos = GetEntityCoords(ped)
-        local inRange = true
+PaletoDoor = function() -- THIS IS ONLY FOR PALETO DOORS
+    local ped = PlayerPedId()
+    local pos = GetEntityCoords(ped)
 
-        local PaletoDist = #(pos - vector3(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"]))
-        local PacificDist = #(pos - vector3(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"]))
-
-        if PaletoDist < 30 then
-            inRange = true
-            if Config.BigBanks["paleto"]["isOpened"] then
-                TriggerServerEvent('qb-doorlock:server:updateState', 85, false)
-                local object = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
-            
-                if object ~= 0 then
-                    SetEntityHeading(object, Config.BigBanks["paleto"]["heading"].open)
-                end
-            else
-                TriggerServerEvent('qb-doorlock:server:updateState', 85, true)
-                local object = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
-            
-                if object ~= 0 then
-                    SetEntityHeading(object, Config.BigBanks["paleto"]["heading"].closed)
-                end
-            end
-        end
-
-        -- Pacific Check
-        if PacificDist < 50 then
-            inRange = true
-            if Config.BigBanks["pacific"]["isOpened"] then
-                local object = GetClosestObjectOfType(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"], 20.0, Config.BigBanks["pacific"]["object"], false, false, false)
-                if object ~= 0 then
-                    SetEntityHeading(object, Config.BigBanks["pacific"]["heading"].open)
-                end
-            else
-                local object = GetClosestObjectOfType(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"], 20.0, Config.BigBanks["pacific"]["object"], false, false, false)
-                if object ~= 0 then
-                    SetEntityHeading(object, Config.BigBanks["pacific"]["heading"].closed)
-                end
-            end
-        end
-
-        if not inRange then
-            Citizen.Wait(5000)
-        end
-
-        Citizen.Wait(1000)
+    if Config.BigBanks["paleto"]["isOpened"] then -- This should leave door open if the door state is true
+        -- we dont wanna set door open because that way it closes them and then opens them again and it will break the loops for the depsoit boxes and trolly with money
+        -- so will will just end the if statment to avoide conflict with loops
     end
-end)
+
+    if not Config.BigBanks["paleto"]["isOpened"] then -- if the starte is false set door closed
+        local object = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
+
+        print('closing the door')
+        SetEntityHeading(object, Config.BigBanks["paleto"]["heading"].closed)
+    end
+end
+
 
 RegisterNetEvent('qb-bankrobbery:client:ClearTimeoutDoors')
 AddEventHandler('qb-bankrobbery:client:ClearTimeoutDoors', function()
