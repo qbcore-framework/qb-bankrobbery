@@ -7,7 +7,7 @@ Citizen.CreateThread(function()
         local PaletoDist = #(pos - vector3(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"]))
         local PacificDist = #(pos - vector3(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"]))
 
-        if PaletoDist < 15 then
+        if PaletoDist < 30 then
             inRange = true
             if Config.BigBanks["paleto"]["isOpened"] then
                 TriggerServerEvent('qb-doorlock:server:updateState', 85, false)
