@@ -116,7 +116,7 @@ AddEventHandler('thermite:UseThermite', function()
                     QBCore.Functions.Notify("It seems that the fuses have blown.", "error")
                 end
             else
-                QBCore.Functions.Notify("Not enough police on duty (2 required)", "error")
+                QBCore.Functions.Notify('Minimum Of '..Config.MinimumThermitePolice.. ' Needed', "error")
             end
         end
     elseif currentThermiteGate ~= 0 then
@@ -134,7 +134,7 @@ AddEventHandler('thermite:UseThermite', function()
                 amount = math.random(5, 10),
             })
         else
-            QBCore.Functions.Notify("Not enough police on duty (2 required)", "error")
+            QBCore.Functions.Notify('Minimum Of '..Config.MinimumThermitePolice.. ' Needed', "error")
         end
     end
 end)
