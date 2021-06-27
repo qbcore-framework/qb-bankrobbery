@@ -350,7 +350,7 @@ function openLocker(bankId, lockerId)
     end
     TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', true)
     if bankId == "paleto" then
-        QBCore.Functions.TriggerCallback('qb-radio:server:GetItem', function(hasItem)
+        QBCore.Functions.TriggerCallback('QBCore:HasItem', function(hasItem)
             if hasItem then
                 loadAnimDict("anim@heists@fleeca_bank@drilling")
                 TaskPlayAnim(PlayerPedId(), 'anim@heists@fleeca_bank@drilling', 'drill_straight_idle' , 3.0, 3.0, -1, 1, 0, false, false, false)
@@ -392,7 +392,7 @@ function openLocker(bankId, lockerId)
             end
         end, "drill")
     elseif bankId == "pacific" then
-        QBCore.Functions.TriggerCallback('qb-radio:server:GetItem', function(hasItem)
+        QBCore.Functions.TriggerCallback('QBCore:HasItem', function(hasItem)
             if hasItem then
                 loadAnimDict("anim@heists@fleeca_bank@drilling")
                 TaskPlayAnim(PlayerPedId(), 'anim@heists@fleeca_bank@drilling', 'drill_straight_idle' , 3.0, 3.0, -1, 1, 0, false, false, false)
