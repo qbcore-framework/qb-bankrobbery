@@ -372,7 +372,7 @@ end
 
 QBCore.Functions.CreateUseableItem("thermite", function(source, item)
     local Player = QBCore.Functions.GetPlayer(source)
-	if Player.Functions.GetItemByName('lighter') > 0 then
+	if Player.Functions.GetItemByName('lighter') ~= nil then
         TriggerClientEvent("thermite:UseThermite", source)
     else
         TriggerClientEvent('QBCore:Notify', source, "You're missing ignition source ", "error")
@@ -381,21 +381,21 @@ end)
 
 QBCore.Functions.CreateUseableItem("security_card_01", function(source, item)
     local Player = QBCore.Functions.GetPlayer(source)
-	if Player.Functions.GetItemByName('security_card_01') > 0 then
+	if Player.Functions.GetItemByName('security_card_01') ~= nil then
         TriggerClientEvent("qb-bankrobbery:UseBankcardA", source)
     end
 end)
 
 QBCore.Functions.CreateUseableItem("security_card_02", function(source, item)
     local Player = QBCore.Functions.GetPlayer(source)
-	if Player.Functions.GetItemByName('security_card_02') > 0 then
+	if Player.Functions.GetItemByName('security_card_02') ~= nil then
         TriggerClientEvent("qb-bankrobbery:UseBankcardB", source)
     end
 end)
 
 QBCore.Functions.CreateUseableItem("electronickit", function(source, item)
     local Player = QBCore.Functions.GetPlayer(source)
-    if Player.Functions.GetItemByName('electronickit') > 0 then
+    if Player.Functions.GetItemByName('electronickit') ~= nil then
         TriggerClientEvent("electronickit:UseElectronickit", source)
     end
 end)
