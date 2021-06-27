@@ -233,7 +233,7 @@ AddEventHandler('qb-bankrobbery:UseBankcardB', function()
                             flags = 16,
                         }, {}, {}, function() -- Done
                             StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                            TriggerServerEvent('qb-doorlock:server:updateState', 71, false)
+                            TriggerServerEvent('qb-doorlock:server:updateState', 76, false)
                             TriggerServerEvent("QBCore:Server:RemoveItem", "security_card_02", 1)
                             if not copsCalled then
                                 local s1, s2 = Citizen.InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
