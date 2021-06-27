@@ -131,7 +131,7 @@ Citizen.CreateThread(function()
                                             if CurrentCops >= Config.MinimumFleecaPolice then
                                                 openLocker(closestBank, k)
                                             else
-                                                QBCore.Functions.Notify('Minimum Of '..Config.MinimumFleecaPolice.. ' Needed', "error")
+                                                QBCore.Functions.Notify('Minimum Of '..Config.MinimumFleecaPolice..' Police Needed', "error")
                                             end
                                         end
                                     end
@@ -226,7 +226,7 @@ AddEventHandler('electronickit:UseElectronickit', function()
                                 QBCore.Functions.Notify("Looks like the bank is already open ..", "error")
                             end
                         else
-                            QBCore.Functions.Notify('Minimum Of '..Config.MinimumFleecaPolice.. ' Needed', "error")
+                            QBCore.Functions.Notify('Minimum Of '..Config.MinimumFleecaPolice..' Police Needed', "error")
                         end
                     end
                 end

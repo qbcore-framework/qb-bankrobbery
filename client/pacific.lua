@@ -88,7 +88,7 @@ Citizen.CreateThread(function()
                                         if CurrentCops >= Config.MinimumPacificPolice then
                                             openLocker("pacific", k)
                                         else
-                                            QBCore.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice.. ' Needed', "error")
+                                            QBCore.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
                                         end
                                     end
                                 end
@@ -198,7 +198,7 @@ AddEventHandler('electronickit:UseElectronickit', function()
                             QBCore.Functions.Notify("Looks like the bank is already open", "error")
                         end
                     else
-                        QBCore.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice.. ' Needed', "error")
+                        QBCore.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
                     end
                 end
             else
@@ -256,7 +256,7 @@ AddEventHandler('qb-bankrobbery:UseBankcardB', function()
                         QBCore.Functions.Notify("Looks like the bank is already open ..", "error")
                     end
                 else
-                    QBCore.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice.. ' Needed', "error")
+                    QBCore.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
                 end
             else
                 QBCore.Functions.Notify("The security lock is active, opening the door is currently not possible.", "error", 5500)

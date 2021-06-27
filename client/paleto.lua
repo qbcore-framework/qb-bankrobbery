@@ -44,7 +44,7 @@ Citizen.CreateThread(function()
                                             if CurrentCops >= Config.MinimumPaletoPolice then
                                                 openLocker("paleto", k)
                                             else
-                                                QBCore.Functions.Notify('Minimum Of '..Config.MinimumPaletoPolice.. ' Needed', "error")
+                                                QBCore.Functions.Notify('Minimum Of '..Config.MinimumPaletoPolice..' Police Needed', "error")
                                             end
                                         end
                                     end
@@ -130,7 +130,7 @@ AddEventHandler('qb-bankrobbery:UseBankcardA', function()
                         QBCore.Functions.Notify("It looks like the bank is already opened..", "error")
                     end
                 else
-                    QBCore.Functions.Notify('Minimum Of '..Config.MinimumPaletoPolice.. ' Needed', "error")
+                    QBCore.Functions.Notify('Minimum Of '..Config.MinimumPaletoPolice..' Police Needed', "error")
                 end
             else
                 QBCore.Functions.Notify("The security lock is active, the door cannot be opened at the moment..", "error", 5500)
