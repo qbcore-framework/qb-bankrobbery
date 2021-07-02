@@ -4,7 +4,12 @@ game 'gta5'
 description 'QB-BankRobbery'
 version '1.0.0'
 
-ui_page "html/index.html"
+ui_page 'html/index.html'
+
+shared_scripts { 
+	'@qb-core/import.lua',
+	'config.lua'
+}
 
 client_scripts {
     'client/fleeca.lua',
@@ -12,13 +17,9 @@ client_scripts {
     'client/powerstation.lua',
     'client/doors.lua',
     'client/paleto.lua',
-    'config.lua',
 }
 
-server_scripts {
-    'server/main.lua',
-    'config.lua',
-}
+server_script 'server/main.lua'
 
 files {
     'html/*',

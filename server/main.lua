@@ -1,6 +1,3 @@
-QBCore = nil
-TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
-
 local robberyBusy = false
 local timeOut = false
 local blackoutActive = false
