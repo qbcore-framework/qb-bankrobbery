@@ -231,7 +231,7 @@ AddEventHandler('qb-bankrobbery:server:SetSmallbankTimeout', function(BankId)
         if not timeOut then
             timeOut = true
             Citizen.CreateThread(function()
-                Citizen.Wait(Config.FleecaTimeout)
+                Citizen.Wait(30 * (60 * 1000))
                 timeOut = false
                 robberyBusy = false
 
