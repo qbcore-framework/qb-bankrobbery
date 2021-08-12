@@ -462,7 +462,7 @@ Config.BigBanks = {
                 ["y"] = 6475.36,
                 ["z"] = 31.62,
                 ["isOpened"] = false,
-                ["doorId"] = 86
+                ["doorId"] = 2
             }
         },
         ["camId"] = 26,
@@ -544,14 +544,14 @@ Config.BigBanks = {
                 ["y"] = 221.15,
                 ["z"] = 101.68,
                 ["isOpened"] = false,
-                ["doorId"] = 78
+                ["doorId"] = 4
             },
             [2] = {
                 ["x"] = 261.15,
                 ["y"] = 215.21,
                 ["z"] = 101.68,
                 ["isOpened"] = false,
-                ["doorId"] = 79
+                ["doorId"] = 5
             }
         },
         ["camId"] = 26,
