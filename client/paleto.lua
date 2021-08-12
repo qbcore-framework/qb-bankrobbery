@@ -108,7 +108,7 @@ AddEventHandler('qb-bankrobbery:UseBankcardA', function()
                             StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
                             TriggerServerEvent('qb-bankrobbery:server:setBankState', "paleto", true)
                             TriggerServerEvent("QBCore:Server:RemoveItem", "security_card_01", 1)
-                            TriggerServerEvent('qb-doorlock:server:updateState', 85, false)
+                            TriggerServerEvent('qb-doorlock:server:updateState', 11, false)
                             if not copsCalled then
                                 local s1, s2 = Citizen.InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
                                 local street1 = GetStreetNameFromHashKey(s1)
@@ -140,7 +140,7 @@ AddEventHandler('qb-bankrobbery:UseBankcardA', function()
 end)
 
 function OpenPaletoDoor()
-    TriggerServerEvent('qb-doorlock:server:updateState', 85, false)
+    TriggerServerEvent('qb-doorlock:server:updateState', 11, false)
     local object = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
     local timeOut = 10
     local entHeading = Config.BigBanks["paleto"]["heading"].closed
