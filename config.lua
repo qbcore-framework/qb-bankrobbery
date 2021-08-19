@@ -107,42 +107,42 @@ Config.SmallBanks = {
         ["isOpened"] = false,
         ["lockers"] = {
             [1] = {
-                vector3(311.16, -287.71, 54.14),
+                coords = vector3(311.16, -287.71, 54.14),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [2] = {
-                vector3(311.86, -286.21, 54.14),
+                coords = vector3(311.86, -286.21, 54.14),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [3] = {
-                vector3(313.39, -289.15, 54.14),
+                coords = vector3(313.39, -289.15, 54.14),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [4] = {
-                vector3(311.7, -288.45, 54.14),
+                coords = vector3(311.7, -288.45, 54.14),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [5] = {
-                vector3(314.23, -288.77, 54.14),
+                coords = vector3(314.23, -288.77, 54.14),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [6] = {
-                vector3(314.83, -287.33, 54.14),
+                coords = vector3(314.83, -287.33, 54.14),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [7] = {
-                vector3(315.24, -284.85, 54.14),
+                coords = vector3(315.24, -284.85, 54.14),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [8] = {
-                vector3(314.08, -283.38, 54.14),
+                coords = vector3(314.08, -283.38, 54.14),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             }
@@ -161,42 +161,42 @@ Config.SmallBanks = {
         ["isOpened"] = false,
         ["lockers"] = {
             [1] = {
-                vector3(149.84, -1044.9, 29.34),
+                coords = vector3(149.84, -1044.9, 29.34),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [2] = {
-                vector3(151.16, -1046.64, 29.34),
+                coords = vector3(151.16, -1046.64, 29.34),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [3] = {
-                vector3(147.16, -1047.72, 29.34),
+                coords = vector3(147.16, -1047.72, 29.34),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [4] = {
-                vector3(146.54, -1049.28, 29.34),
+                coords = vector3(146.54, -1049.28, 29.34),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [5] = {
-                vector3(146.88, -1050.33, 29.34),
+                coords = vector3(146.88, -1050.33, 29.34),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [6] = {
-                vector3(150.0, -1050.67, 29.34),
+                coords = vector3(150.0, -1050.67, 29.34),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [7] = {
-                vector3(149.47, -1051.28, 29.34),
+                coords = vector3(149.47, -1051.28, 29.34),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [8] = {
-                vector3(150.58, -1049.09, 29.34),
+                coords = vector3(150.58, -1049.09, 29.34),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             }
@@ -215,42 +215,42 @@ Config.SmallBanks = {
         ["isOpened"] = false,
         ["lockers"] = {
             [1] = {
-                vector3(350.99, -54.13, 49.01),
+                coords = vector3(350.99, -54.13, 49.01),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [2] = {
-                vector3(-349.53, -55.77, 49.01),
+                coords = vector3(-349.53, -55.77, 49.01),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [3] = {
-                vector3(-353.54, -56.94, 49.01),
+                coords = vector3(-353.54, -56.94, 49.01),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [4] = {
-                vector3(-354.09, -58.55, 49.01),
+                coords = vector3(-354.09, -58.55, 49.01),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [5] = {
-                vector3(-353.81, -59.48, 49.01),
+                coords = vector3(-353.81, -59.48, 49.01),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [6] = {
-                vector3(-349.8, -58.3, 49.01),
+                coords = coords = vector3(-349.8, -58.3, 49.01),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [7] = {
-                vector3(-351.14, -60.37, 49.01),
+                coords = vector3(-351.14, -60.37, 49.01),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [8] = {
-                vector3(-350.4, -59.92, 49.01),
+                coords = vector3(-350.4, -59.92, 49.01),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             }
@@ -269,42 +269,42 @@ Config.SmallBanks = {
         ["isOpened"] = false,
         ["lockers"] = {
             [1] = {
-                vector3(-1209.68, -333.65, 37.75),
+                coords = vector3(-1209.68, -333.65, 37.75),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [2] = {
-                vector3(-1207.46, -333.77, 37.75),
+                coords = vector3(-1207.46, -333.77, 37.75),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [3] = {
-                vector3(-1209.45, -337.47, 37.75),
+                coords = vector3(-1209.45, -337.47, 37.75),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [4] = {
-                vector3(-1208.65, -339.06, 37.75),
+                coords = vector3(-1208.65, -339.06, 37.75),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [5] = {
-                vector3(-1207.75, -339.42, 37.75),
+                coords = vector3(-1207.75, -339.42, 37.75),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [6] = {
-                vector3(-1205.28, -338.14, 37.75),
+                coords = vector3(-1205.28, -338.14, 37.75),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [7] = {
-                vector3(-1205.08, -337.28, 37.75),
+                coords = vector3(-1205.08, -337.28, 37.75),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [8] = {
-                vector3(-1205.92, -335.75, 37.75),
+                coords = vector3(-1205.92, -335.75, 37.75),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             }
@@ -323,42 +323,42 @@ Config.SmallBanks = {
         ["isOpened"] = false,
         ["lockers"] = {
             [1] = {
-                vector3(-2958.54, 484.1, 15.67),
+                coords = vector3(-2958.54, 484.1, 15.67),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [2] = {
-                vector3(-2957.3, 485.95, 15.67),
+                coords = vector3(-2957.3, 485.95, 15.67),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [3] = {
-                vector3(-2955.09, 482.43, 15.67),
+                coords = vector3(-2955.09, 482.43, 15.67),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [4] = {
-                vector3(-2953.26, 482.42, 15.67),
+                coords = vector3(-2953.26, 482.42, 15.67),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [5] = {
-                vector3(-2952.63, 483.09, 15.67),
+                coords = vector3(-2952.63, 483.09, 15.67),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [6] = {
-                vector3(-2952.45, 485.66, 15.67),
+                coords = vector3(-2952.45, 485.66, 15.67),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [7] = {
-                vector3(-2953.13, 486.26, 15.67),
+                coords = vector3(-2953.13, 486.26, 15.67),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [8] = {
-                vector3(-2954.98, 486.37, 15.67),
+                coords = vector3(-2954.98, 486.37, 15.67),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             }
@@ -387,42 +387,42 @@ Config.BigBanks = {
         ["isOpened"] = false,
         ["lockers"] = {
             [1] = {
-                vector3(-107.4, 6473.87, 31.62),
+                coords = vector3(-107.4, 6473.87, 31.62),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [2] = {
-                vector3(-107.66, 6475.61, 31.62),
+                coords = vector3(-107.66, 6475.61, 31.62),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [3] = {
-                vector3(-103.52, 6475.03, 31.62),
+                coords = vector3(-103.52, 6475.03, 31.62),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [4] = {
-                vector3(-102.3, 6476.13, 31.66),
+                coords = vector3(-102.3, 6476.13, 31.66),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [5] = {
-                vector3(-102.43, 6477.45, 31.67),
+                coords = vector3(-102.43, 6477.45, 31.67),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [6] = {
-                vector3(-103.97, 6478.97, 31.62),
+                coords = vector3(-103.97, 6478.97, 31.62),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [7] = {
-                vector3(-105.39, 6479.19, 31.67),
+                coords = vector3(-105.39, 6479.19, 31.67),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [8] = {
-                vector3(-106.57, 6478.01, 31.62),
+                coords = vector3(-106.57, 6478.01, 31.62),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             }
@@ -442,12 +442,12 @@ Config.BigBanks = {
         },
         ["thermite"] = {
             [1] = {
-                vector3(252.55, 221.15, 101.68),
+                coords = vector3(252.55, 221.15, 101.68),
                 ["isOpened"] = false,
                 ["doorId"] = 78
             },
             [2] = {
-                vector3(261.15, 215.21, 101.68),
+                coords = vector3(261.15, 215.21, 101.68),
                 ["isOpened"] = false,
                 ["doorId"] = 79
             }
@@ -456,52 +456,52 @@ Config.BigBanks = {
         ["isOpened"] = false,
         ["lockers"] = {
             [1] = {
-                vector3(258.57, 218.36, 101.68),
+                coords = vector3(258.57, 218.36, 101.68),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [2] = {
-                vector3(260.82, 217.62, 101.68),
+                coords = vector3(260.82, 217.62, 101.68),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [3] = {
-                vector3(259.33, 213.76, 101.68),
+                coords = vector3(259.33, 213.76, 101.68),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [4] = {
-                vector3(257.09, 214.55, 101.68),
+                coords = vector3(257.09, 214.55, 101.68),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [5] = {
-                vector3(263.7, 216.48, 101.68),
+                coords = vector3(263.7, 216.48, 101.68),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [6] = {
-                vector3(265.81, 215.81, 101.68),
+                coords = vector3(265.81, 215.81, 101.68),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [7] = {
-                vector3(266.43, 214.37, 101.68),
+                coords = vector3(266.43, 214.37, 101.68),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [8] = {
-                vector3(265.71, 212.49, 101.68),
+                coords = vector3(265.71, 212.49, 101.68),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [9] = {
-                vector3(264.24, 211.92, 101.68),
+                coords = vector3(264.24, 211.92, 101.68),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [10] = {
-                vector3(262.21, 212.67, 101.68),
+                coords = vector3(262.21, 212.67, 101.68),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             }
