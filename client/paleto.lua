@@ -15,10 +15,10 @@ Citizen.CreateThread(function()
         local pos = GetEntityCoords(ped)
         local inRange = false
         if QBCore ~= nil then
-            if #(pos - vector3(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"])) < 20.0 then
+            if #(pos - Config.BigBanks["paleto"]["coords"]) < 20.0 then
                 inRange = true
                 if not Config.BigBanks["paleto"]["isOpened"] then
-                    local dist = #(pos - vector3(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"]))
+                    local dist = #(pos - Config.BigBanks["paleto"]["coords"])
                     if dist < 1 then
                         if not requiredItemsShowed then
                             requiredItemsShowed = true
@@ -33,13 +33,13 @@ Citizen.CreateThread(function()
                 end
                 if Config.BigBanks["paleto"]["isOpened"] then
                     for k, v in pairs(Config.BigBanks["paleto"]["lockers"]) do
-                        local lockerDist = #(pos - vector3(Config.BigBanks["paleto"]["lockers"][k].x, Config.BigBanks["paleto"]["lockers"][k].y, Config.BigBanks["paleto"]["lockers"][k].z))
+                        local lockerDist = #(pos - Config.BigBanks["paleto"]["lockers"][k]["coords"])
                         if not Config.BigBanks["paleto"]["lockers"][k]["isBusy"] then
                             if not Config.BigBanks["paleto"]["lockers"][k]["isOpened"] then
                                 if lockerDist < 5 then
-                                    DrawMarker(2, Config.BigBanks["paleto"]["lockers"][k].x, Config.BigBanks["paleto"]["lockers"][k].y, Config.BigBanks["paleto"]["lockers"][k].z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.05, 255, 255, 255, 255, false, false, false, 1, false, false, false)
+                                    DrawMarker(2, Config.BigBanks["paleto"]["lockers"][k]["coords"].x, Config.BigBanks["paleto"]["lockers"][k]["coords"].y, Config.BigBanks["paleto"]["lockers"][k]["coords"].z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.05, 255, 255, 255, 255, false, false, false, 1, false, false, false)
                                     if lockerDist < 0.5 then
-                                        DrawText3Ds(Config.BigBanks["paleto"]["lockers"][k].x, Config.BigBanks["paleto"]["lockers"][k].y, Config.BigBanks["paleto"]["lockers"][k].z + 0.3, '[E] Crack the vault')
+                                        DrawText3Ds(Config.BigBanks["paleto"]["lockers"][k]["coords"].x, Config.BigBanks["paleto"]["lockers"][k]["coords"].y, Config.BigBanks["paleto"]["lockers"][k]["coords"].z + 0.3, '[E] Crack the vault')
                                         if IsControlJustPressed(0, 38) then
                                             if CurrentCops >= Config.MinimumPaletoPolice then
                                                 openLocker("paleto", k)
@@ -54,10 +54,10 @@ Citizen.CreateThread(function()
                     end
                 end
             end
-            if #(pos - vector3(Config.BigBanks["paleto"]["thermite"][1]["x"], Config.BigBanks["paleto"]["thermite"][1]["y"], Config.BigBanks["paleto"]["thermite"][1]["z"])) < 10.0 then
+            if #(pos - Config.BigBanks["paleto"]["thermite"][1]["coords"]) < 10.0 then
                 inRange = true
                 if not Config.BigBanks["pacific"]["thermite"][1]["isOpened"] then
-                    local dist = #(pos - vector3(Config.BigBanks["paleto"]["thermite"][1]["x"], Config.BigBanks["paleto"]["thermite"][1]["y"], Config.BigBanks["paleto"]["thermite"][1]["z"]))
+                    local dist = #(pos - Config.BigBanks["paleto"]["thermite"][1]["coords"])
                     if dist < 1 then
                         currentThermiteGate = Config.BigBanks["paleto"]["thermite"][1]["doorId"]
                         if not requiredItemsShowed2 then
@@ -85,7 +85,7 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA')
 AddEventHandler('qb-bankrobbery:UseBankcardA', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
-    local dist = #(pos - vector3(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"],Config.BigBanks["paleto"]["coords"]["z"]))
+    local dist = #(pos - Config.BigBanks["paleto"]["coords"])
     if math.random(1, 100) <= 85 and not IsWearingHandshoes() then
         TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
     end

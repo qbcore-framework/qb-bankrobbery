@@ -20,10 +20,10 @@ Citizen.CreateThread(function()
         local pos = GetEntityCoords(ped)
         local inRange = false
         if QBCore ~= nil then
-            if #(pos - vector3(Config.BigBanks["pacific"]["coords"][1]["x"], Config.BigBanks["pacific"]["coords"][1]["y"], Config.BigBanks["pacific"]["coords"][1]["z"])) < 10.0 then
+            if #(pos - Config.BigBanks["pacific"]["coords"][1]) < 10.0 then
                 inRange = true
                 if not Config.BigBanks["pacific"]["isOpened"] then
-                    local dist = #(pos - vector3(Config.BigBanks["pacific"]["coords"][1]["x"], Config.BigBanks["pacific"]["coords"][1]["y"], Config.BigBanks["pacific"]["coords"][1]["z"]))
+                    local dist = #(pos - Config.BigBanks["pacific"]["coords"][1])
                     if dist < 1 then
                         if not requiredItemsShowed then
                             requiredItemsShowed = true
@@ -37,10 +37,10 @@ Citizen.CreateThread(function()
                     end
                 end
             end
-            if #(pos - vector3(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"])) < 10.0 then
+            if #(pos - Config.BigBanks["pacific"]["coords"][2]) < 10.0 then
                 inRange = true
                 if not Config.BigBanks["pacific"]["isOpened"] then
-                    local dist = #(pos - vector3(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"]))
+                    local dist = #(pos - Config.BigBanks["pacific"]["coords"][2])
                     if dist < 1 then
                         if not requiredItemsShowed2 then
                             requiredItemsShowed2 = true
@@ -54,10 +54,10 @@ Citizen.CreateThread(function()
                     end
                 end
             end
-            if #(pos - vector3(Config.BigBanks["pacific"]["thermite"][1]["x"], Config.BigBanks["pacific"]["thermite"][1]["y"], Config.BigBanks["pacific"]["thermite"][1]["z"])) < 10.0 then
+            if #(pos - Config.BigBanks["pacific"]["thermite"][1]["coords"]) < 10.0 then
                 inRange = true
                 if not Config.BigBanks["pacific"]["thermite"][1]["isOpened"] then
-                    local dist = #(pos - vector3(Config.BigBanks["pacific"]["thermite"][1]["x"], Config.BigBanks["pacific"]["thermite"][1]["y"], Config.BigBanks["pacific"]["thermite"][1]["z"]))
+                    local dist = #(pos - Config.BigBanks["pacific"]["thermite"][1]["coords"])
                     if dist < 1 then
                         currentThermiteGate = Config.BigBanks["pacific"]["thermite"][1]["doorId"]
                         if not requiredItemsShowed3 then
@@ -76,14 +76,14 @@ Citizen.CreateThread(function()
 
             if Config.BigBanks["pacific"]["isOpened"] then
                 for k, v in pairs(Config.BigBanks["pacific"]["lockers"]) do
-                    local lockerDist = #(pos - vector3(Config.BigBanks["pacific"]["lockers"][k].x, Config.BigBanks["pacific"]["lockers"][k].y, Config.BigBanks["pacific"]["lockers"][k].z))
+                    local lockerDist = #(pos - Config.BigBanks["pacific"]["lockers"][k]["coords"])
                     if not Config.BigBanks["pacific"]["lockers"][k]["isBusy"] then
                         if not Config.BigBanks["pacific"]["lockers"][k]["isOpened"] then
                             if lockerDist < 5 then
                                 inRange = true
-                                DrawMarker(2, Config.BigBanks["pacific"]["lockers"][k].x, Config.BigBanks["pacific"]["lockers"][k].y, Config.BigBanks["pacific"]["lockers"][k].z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.05, 255, 255, 255, 255, false, false, false, 1, false, false, false)
+                                DrawMarker(2, Config.BigBanks["pacific"]["lockers"][k]["coords"].x, Config.BigBanks["pacific"]["lockers"][k]["coords"].y, Config.BigBanks["pacific"]["lockers"][k]["coords"].z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.05, 255, 255, 255, 255, false, false, false, 1, false, false, false)
                                 if lockerDist < 0.5 then
-                                    DrawText3Ds(Config.BigBanks["pacific"]["lockers"][k].x, Config.BigBanks["pacific"]["lockers"][k].y, Config.BigBanks["pacific"]["lockers"][k].z + 0.3, '[E] Break open the safe')
+                                    DrawText3Ds(Config.BigBanks["pacific"]["lockers"][k]["coords"].x, Config.BigBanks["pacific"]["lockers"][k]["coords"].y, Config.BigBanks["pacific"]["lockers"][k]["coords"].z + 0.3, '[E] Break open the safe')
                                     if IsControlJustPressed(0, 38) then
                                         if CurrentCops >= Config.MinimumPacificPolice then
                                             openLocker("pacific", k)
@@ -116,10 +116,10 @@ Citizen.CreateThread(function()
         local pos = GetEntityCoords(ped)
         local inRange = false
         if QBCore ~= nil then
-            if #(pos - vector3(Config.BigBanks["pacific"]["thermite"][2]["x"], Config.BigBanks["pacific"]["thermite"][2]["y"], Config.BigBanks["pacific"]["thermite"][2]["z"])) < 10.0 then
+            if #(pos - Config.BigBanks["pacific"]["thermite"][2]["coords"]) < 10.0 then
                 inRange = true
                 if not Config.BigBanks["pacific"]["thermite"][1]["isOpened"] then
-                    local dist = #(pos - vector3(Config.BigBanks["pacific"]["thermite"][2]["x"], Config.BigBanks["pacific"]["thermite"][2]["y"], Config.BigBanks["pacific"]["thermite"][2]["z"]))
+                    local dist = #(pos - Config.BigBanks["pacific"]["thermite"][2]["coords"])
                     if dist < 1 then
                         currentThermiteGate = Config.BigBanks["pacific"]["thermite"][2]["doorId"]
                         if not requiredItemsShowed4 then
@@ -144,11 +144,11 @@ RegisterNetEvent('electronickit:UseElectronickit')
 AddEventHandler('electronickit:UseElectronickit', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
-    local dist = #(pos - vector3(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"]))
+    local dist = #(pos - Config.BigBanks["pacific"]["coords"][2])
     if dist < 1.5 then
         QBCore.Functions.TriggerCallback('qb-bankrobbery:server:isRobberyActive', function(isBusy)
             if not isBusy then
-                local dist = #(pos - vector3(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"]))
+                local dist = #(pos - Config.BigBanks["pacific"]["coords"][2])
                 if dist < 1.5 then
                     if CurrentCops >= Config.MinimumPacificPolice then
                         if not Config.BigBanks["pacific"]["isOpened"] then 
@@ -212,7 +212,7 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardB')
 AddEventHandler('qb-bankrobbery:UseBankcardB', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
-    local dist = #(pos - vector3(Config.BigBanks["pacific"]["coords"][1]["x"], Config.BigBanks["pacific"]["coords"][1]["y"],Config.BigBanks["pacific"]["coords"][1]["z"]))
+    local dist = #(pos - Config.BigBanks["pacific"]["coords"][1])
     if math.random(1, 100) <= 85 and not IsWearingHandshoes() then
         TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
     end

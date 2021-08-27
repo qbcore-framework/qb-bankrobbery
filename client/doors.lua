@@ -4,8 +4,8 @@ Citizen.CreateThread(function()
         local pos = GetEntityCoords(ped)
         local inRange = true
 
-        local PaletoDist = #(pos - vector3(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"]))
-        local PacificDist = #(pos - vector3(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"]))
+        local PaletoDist = #(pos - Config.BigBanks["paleto"]["coords"])
+        local PacificDist = #(pos - Config.BigBanks["pacific"]["coords"][2])
 
         if PaletoDist < 15 then
             inRange = true

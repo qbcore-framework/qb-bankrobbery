@@ -13,7 +13,7 @@ Citizen.CreateThread(function()
         if QBCore ~= nil then
             local inRange = false
             for k, v in pairs(Config.PowerStations) do
-                dist = #(pos - vector3(Config.PowerStations[k].coords.x, Config.PowerStations[k].coords.y, Config.PowerStations[k].coords.z))
+                dist = #(pos - Config.PowerStations[k].coords)
                 if dist < 5 then
                     closestStation = k
                     inRange = true
@@ -43,7 +43,7 @@ Citizen.CreateThread(function()
             if closestStation ~= 0 then
                 if not Config.PowerStations[closestStation].hit then
                     DrawMarker(2, Config.PowerStations[closestStation].coords.x, Config.PowerStations[closestStation].coords.y, Config.PowerStations[closestStation].coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 0.25, 0.1, 255, 255, 255, 155, 0, 0, 0, 1, 0, 0, 0)
-                    local dist = #(pos - vector3(Config.PowerStations[closestStation].coords.x, Config.PowerStations[closestStation].coords.y, Config.PowerStations[closestStation].coords.z))
+                    local dist = #(pos - Config.PowerStations[closestStation].coords)
                     if dist < 1 then
                         if not requiredItemsShowed then
                             requiredItemsShowed = true
@@ -99,7 +99,7 @@ AddEventHandler('thermite:UseThermite', function()
         if math.random(1, 100) <= 85 and not IsWearingHandshoes() then
             TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
         end
-        local dist = #(pos - vector3(Config.PowerStations[closestStation].coords.x, Config.PowerStations[closestStation].coords.y, Config.PowerStations[closestStation].coords.z))
+        local dist = #(pos - Config.PowerStations[closestStation].coords)
         if dist < 1.5 then
             if CurrentCops >= Config.MinimumThermitePolice then
                 if not Config.PowerStations[closestStation].hit then

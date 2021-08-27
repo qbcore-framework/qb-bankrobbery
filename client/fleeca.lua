@@ -61,7 +61,7 @@ Citizen.CreateThread(function()
             inRange = false
 
             for k, v in pairs(Config.SmallBanks) do
-                dist = #(pos - vector3(Config.SmallBanks[k]["coords"]["x"], Config.SmallBanks[k]["coords"]["y"], Config.SmallBanks[k]["coords"]["z"]))
+                dist = #(pos - Config.SmallBanks[k]["coords"])
                 if dist < 15 then
                     closestBank = k
                     inRange = true
@@ -94,7 +94,7 @@ Citizen.CreateThread(function()
         if QBCore ~= nil then
             if closestBank ~= nil then
                 if not Config.SmallBanks[closestBank]["isOpened"] then
-                    local dist = #(pos - vector3(Config.SmallBanks[closestBank]["coords"]["x"], Config.SmallBanks[closestBank]["coords"]["y"], Config.SmallBanks[closestBank]["coords"]["z"]))
+                    local dist = #(pos - Config.SmallBanks[closestBank]["coords"])
                     if dist < 1 then
                         if not requiredItemsShowed then
                             requiredItemsShowed = true
@@ -109,18 +109,18 @@ Citizen.CreateThread(function()
                 end
                 if Config.SmallBanks[closestBank]["isOpened"] then
                     for k, v in pairs(Config.SmallBanks[closestBank]["lockers"]) do
-                        local lockerDist = #(pos - vector3(Config.SmallBanks[closestBank]["lockers"][k].x, Config.SmallBanks[closestBank]["lockers"][k].y, Config.SmallBanks[closestBank]["lockers"][k].z))
+                        local lockerDist = #(pos - Config.SmallBanks[closestBank]["lockers"][k]["coords"])
                         if not Config.SmallBanks[closestBank]["lockers"][k]["isBusy"] then
                             if not Config.SmallBanks[closestBank]["lockers"][k]["isOpened"] then
                                 if lockerDist < 5 then
-                                    DrawMarker(2, Config.SmallBanks[closestBank]["lockers"][k].x, Config.SmallBanks[closestBank]["lockers"][k].y, Config.SmallBanks[closestBank]["lockers"][k].z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.05, 255, 255, 255, 255, false, false, false, 1, false, false, false)
+                                    DrawMarker(2, Config.SmallBanks[closestBank]["lockers"][k]["coords"].x, Config.SmallBanks[closestBank]["lockers"][k]["coords"].y, Config.SmallBanks[closestBank]["lockers"][k]["coords"].z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.05, 255, 255, 255, 255, false, false, false, 1, false, false, false)
                                     if lockerDist < 0.5 then
-                                        DrawText3Ds(Config.SmallBanks[closestBank]["lockers"][k].x, Config.SmallBanks[closestBank]["lockers"][k].y, Config.SmallBanks[closestBank]["lockers"][k].z + 0.3, '[E] Break open the safe')
+                                        DrawText3Ds(Config.SmallBanks[closestBank]["lockers"][k]["coords"].x, Config.SmallBanks[closestBank]["lockers"][k]["coords"].y, Config.SmallBanks[closestBank]["lockers"][k]["coords"].z + 0.3, '[E] Break open the safe')
                                         if IsControlJustPressed(0, 38) then
                                             if CurrentCops >= Config.MinimumFleecaPolice then
                                                 openLocker(closestBank, k)
                                             else
-                                                QBCore.Functions.Notify('Minimum Of '..Config.MinimumFleecaPolice..' Police Needed', "error")
+                                                QBCore.Functions.Notify('Minimum Of '..Config.MinimumFleecaPolice..' Police Needed', "error") 
                                             end
                                         end
                                     end
@@ -164,7 +164,7 @@ AddEventHandler('electronickit:UseElectronickit', function()
         QBCore.Functions.TriggerCallback('qb-bankrobbery:server:isRobberyActive', function(isBusy)
             if not isBusy then
                 if closestBank ~= nil then
-                    local dist = #(pos - vector3(Config.SmallBanks[closestBank]["coords"]["x"], Config.SmallBanks[closestBank]["coords"]["y"], Config.SmallBanks[closestBank]["coords"]["z"]))
+                    local dist = #(pos - Config.SmallBanks[closestBank]["coords"])
                     if dist < 1.5 then
                         if CurrentCops >= Config.MinimumFleecaPolice then
                             if not Config.SmallBanks[closestBank]["isOpened"] then 
