@@ -34,7 +34,7 @@ AddEventHandler('qb-bankrobbery:server:setBankState', function(bankId, state)
         if not robberyBusy then
             Config.BigBanks["paleto"]["isOpened"] = state
             TriggerClientEvent('qb-bankrobbery:client:setBankState', -1, bankId, state)
-            TriggerEvent('qb-scoreboard:server:SetActivityBusy', "bankrobbery", true)
+            TriggerEvent('qb-scoreboard:server:SetActivityBusy', "paleto", true)
             TriggerEvent('qb-bankrobbery:server:setTimeout')
         end
     elseif bankId == "pacific" then
