@@ -1,6 +1,6 @@
 local closestStation = 0
 local currentStation = 0
-CurrentCops = 0
+local CurrentCops = 0
 local currentFires = {}
 local currentGate = 0
 
