@@ -3,8 +3,8 @@ local inRange
 local requiredItemsShowed = false
 local copsCalled = false
 local PlayerJob = {}
-local currentThermiteGate = 0
-local CurrentCops = 0
+currentThermiteGate = 0
+CurrentCops = 0
 
 Citizen.CreateThread(function()
     while true do
