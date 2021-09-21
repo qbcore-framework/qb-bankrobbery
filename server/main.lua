@@ -257,14 +257,14 @@ AddEventHandler('qb-bankrobbery:server:callCops', function(type, bank, streetLab
     if type == "small" then
         cameraId = Config.SmallBanks[bank]["camId"]
         bankLabel = "Fleeca"
-        msg = "The Alram has been activated at "..bankLabel.. " " ..streetLabel.." (CAMERA ID: "..cameraId..")"
+        msg = "The Alarm has been activated at "..bankLabel.. " " ..streetLabel.." (CAMERA ID: "..cameraId..")"
     elseif type == "paleto" then
         cameraId = Config.BigBanks["paleto"]["camId"]
         bankLabel = "Blaine County Savings"
-        msg = "The Alram has been activated at "..bankLabel.. " Paleto Bay (CAMERA ID: "..cameraId..")"
+        msg = "The Alarm has been activated at "..bankLabel.. " Paleto Bay (CAMERA ID: "..cameraId..")"
     elseif type == "pacific" then
         bankLabel = "Pacific Standard Bank"
-        msg = "The Alram has been activated at "..bankLabel.. " Alta St (CAMERA ID: 1/2/3)"
+        msg = "The Alarm has been activated at "..bankLabel.. " Alta St (CAMERA ID: 1/2/3)"
     end
     local alertData = {
         title = "Bank robbery",
