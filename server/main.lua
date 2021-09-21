@@ -49,7 +49,7 @@ AddEventHandler('qb-bankrobbery:server:setBankState', function(bankId, state)
             Config.SmallBanks[bankId]["isOpened"] = state
             TriggerClientEvent('qb-bankrobbery:client:setBankState', -1, bankId, state)
             TriggerEvent('qb-banking:server:SetBankClosed', bankId, true)
-            TriggerEvent('qb-scoreboard:server:SetActivityBusy', "bankrobbery", true)
+            TriggerEvent('qb-scoreboard:server:SetActivityBusy', "fleeca", true)
             TriggerEvent('qb-bankrobbery:server:SetSmallbankTimeout', bankId)
         end
     end
@@ -204,7 +204,7 @@ AddEventHandler('qb-bankrobbery:server:setTimeout', function()
                 Citizen.Wait(90 * (60 * 1000))
                 timeOut = false
                 robberyBusy = false
-                TriggerEvent('qb-scoreboard:server:SetActivityBusy', "bankrobbery", false)
+                TriggerEvent('qb-scoreboard:server:SetActivityBusy', "fleeca", false)
                 TriggerEvent('qb-scoreboard:server:SetActivityBusy', "pacific", false)
 
                 for k, v in pairs(Config.BigBanks["pacific"]["lockers"]) do
