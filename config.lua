@@ -17,7 +17,7 @@ Config.RewardTypes = {
     }
 }
 
-Config.LockerRewards = {
+Config.LockerRewardsFleeca = {
     ["tier1"] = {
         [1] = {item = "goldchain", minAmount = 5, maxAmount = 15},
     },
