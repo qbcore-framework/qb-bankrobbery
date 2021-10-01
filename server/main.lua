@@ -34,7 +34,7 @@ AddEventHandler('qb-bankrobbery:server:setBankState', function(bankId, state)
         if not robberyBusy then
             Config.BigBanks["paleto"]["isOpened"] = state
             TriggerClientEvent('qb-bankrobbery:client:setBankState', -1, bankId, state)
-            TriggerEvent('qb-scoreboard:server:SetActivityBusy', "bankrobbery", true)
+            TriggerEvent('qb-scoreboard:server:SetActivityBusy', "paleto", true)
             TriggerEvent('qb-bankrobbery:server:setTimeout')
         end
     elseif bankId == "pacific" then
@@ -86,7 +86,7 @@ AddEventHandler('qb-bankrobbery:server:recieveItem', function(type)
             if tier ~= 4 then
                  if Config.RewardTypes[itemType].type == "item" then
                      local item = Config.LockerRewards["tier"..tier][math.random(#Config.LockerRewards["tier"..tier])]
-                     local itemAmount = math.random(item.maxAmount)
+                     local itemAmount = math.random(item.minAmount, item.maxAmount)
                      ply.Functions.AddItem(item.item, itemAmount)
                      TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[item.item], "add")
                  elseif Config.RewardTypes[itemType].type == "money" then
@@ -114,8 +114,8 @@ AddEventHandler('qb-bankrobbery:server:recieveItem', function(type)
         if WeaponChance ~= odd1 then
             if tier ~= 4 then
                  if Config.RewardTypes[itemType].type == "item" then
-                     local item = Config.LockerRewards["tier"..tier][math.random(#Config.LockerRewards["tier"..tier])]
-                     local itemAmount = math.random(item.maxAmount)
+                     local item = Config.LockerRewardsPaleto["tier"..tier][math.random(#Config.LockerRewardsPaleto["tier"..tier])]
+                     local itemAmount = math.random(item.minAmount, item.maxAmount)
 
                      ply.Functions.AddItem(item.item, itemAmount)
                      TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[item.item], "add")
@@ -145,8 +145,8 @@ AddEventHandler('qb-bankrobbery:server:recieveItem', function(type)
         if WeaponChance ~= odd1 or WeaponChance ~= odd2 then
             if tier ~= 4 then
                 if Config.RewardTypes[itemType].type == "item" then
-                    local item = Config.LockerRewards["tier"..tier][math.random(#Config.LockerRewards["tier"..tier])]
-                    local maxAmount = item.maxAmount
+                    local item = Config.LockerRewardsPacific["tier"..tier][math.random(#Config.LockerRewardsPacific["tier"..tier])]
+                    local itemAmount = math.random(item.minAmount, item.maxAmount)
                     if tier == 3 then maxAmount = 7 elseif tier == 2 then maxAmount = 18 else maxAmount = 25 end
                     local itemAmount = math.random(maxAmount)
 
