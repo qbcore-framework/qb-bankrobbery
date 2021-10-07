@@ -148,13 +148,16 @@ RegisterNUICallback('thermiteclick', function()
 end)
 
 RegisterNUICallback('thermitefailed', function()
-    PlaySound(-1, "Place_Prop_Fail", "DLC_Dmod_Prop_Editor_Sounds", 0, 0, 1)
-    TriggerServerEvent("QBCore:Server:RemoveItem", "thermite", 1)
-    TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["thermite"], "remove")
-    ClearPedTasks(PlayerPedId())
-    local coords = GetEntityCoords(PlayerPedId())
-    local randTime = math.random(10000, 15000)
-    CreateFire(coords, randTime)
+    QBCore.Functions.TriggerCallback("thermite:server:failed", function(success)
+        if success then
+            PlaySound(-1, "Place_Prop_Fail", "DLC_Dmod_Prop_Editor_Sounds", 0, 0, 1)
+            ClearPedTasks(PlayerPedId())
+            local coords = GetEntityCoords(PlayerPedId())
+            local randTime = math.random(10000, 15000)
+
+            CreateFire(coords, randTime)
+        end
+    end)
 end)
 
 RegisterNUICallback('thermitesuccess', function()
