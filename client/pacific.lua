@@ -174,7 +174,7 @@ AddEventHandler('electronickit:UseElectronickit', function()
                                         TriggerEvent("mhacking:start", math.random(5, 9), math.random(10, 15), OnHackPacificDone)
                                 
                                         if not copsCalled then
-                                            local s1, s2 = Citizen.InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
+                                            local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
                                             local street1 = GetStreetNameFromHashKey(s1)
                                             local street2 = GetStreetNameFromHashKey(s2)
                                             local streetLabel = street1
@@ -236,7 +236,7 @@ AddEventHandler('qb-bankrobbery:UseBankcardB', function()
                             TriggerServerEvent('qb-doorlock:server:updateState', 1, false)
                             TriggerServerEvent("QBCore:Server:RemoveItem", "security_card_02", 1)
                             if not copsCalled then
-                                local s1, s2 = Citizen.InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
+                                local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
                                 local street1 = GetStreetNameFromHashKey(s1)
                                 local street2 = GetStreetNameFromHashKey(s2)
                                 local streetLabel = street1
