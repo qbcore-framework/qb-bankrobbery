@@ -3,6 +3,7 @@ local inRange
 local requiredItemsShowed = false
 local copsCalled = false
 local PlayerJob = {}
+local refreshed = false
 currentThermiteGate = 0
 CurrentCops = 0
 
@@ -47,6 +48,20 @@ end)
 RegisterNetEvent('QBCore:Client:SetDuty')
 AddEventHandler('QBCore:Client:SetDuty', function(duty)
     onDuty = duty
+end)
+
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(1000)
+        if inRange then
+            if not refreshed then
+                ResetBankDoors()
+                refreshed = true
+            end
+        else
+            refreshed = false
+        end
+    end
 end)
 
 Citizen.CreateThread(function()
