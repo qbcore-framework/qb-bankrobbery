@@ -378,7 +378,61 @@ Config.SmallBanks = {
                 ["isOpened"] = false
             }
         }
-    }
+    },
+    [6] = {
+        ["label"] = "East",
+        ["coords"] = vector3(1175.96, 2712.87, 38.09),
+        ["alarm"] = true,
+        ["object"] = GetHashKey("v_ilev_gb_vauldr"),
+        ["heading"] = {
+            closed = -270.542,
+            open = -170.542
+        },
+        ["camId"] = 25,
+        ["isOpened"] = false,
+        ["lockers"] = {
+            [1] = {
+                ["coords"] = vector3(1173.69, 2710.76, 38.07),
+                ["isBusy"] = false,
+                ["isOpened"] = false
+            },
+            [2] = {
+                ["coords"] = vector3(1171.78, 2711.94, 38.07),
+                ["isBusy"] = false,
+                ["isOpened"] = false
+            },
+            [3] = {
+                ["coords"] = vector3(1175.25, 2714.51, 38.07),
+                ["isBusy"] = false,
+                ["isOpened"] = false
+            },
+            [4] = {
+                ["coords"] = vector3(1175.26, 2715.97, 38.07),
+                ["isBusy"] = false,
+                ["isOpened"] = false
+            },
+            [5] = {
+                ["coords"] = vector3(1174.27, 2716.83, 38.07),
+                ["isBusy"] = false,
+                ["isOpened"] = false
+            },
+            [6] = {
+                ["coords"] = vector3(1172.32, 2716.82, 38.07),
+                ["isBusy"] = false,
+                ["isOpened"] = false
+            },
+            [7] = {
+                ["coords"] = vector3(1171.25, 2716.08, 38.07),
+                ["isBusy"] = false,
+                ["isOpened"] = false
+            },
+            [8] = {
+                ["coords"] = vector3(1171.23, 2714.44, 38.07),
+                ["isBusy"] = false,
+                ["isOpened"] = false
+            }
+        }
+    }	
 }
 
 Config.BigBanks = {
