@@ -289,6 +289,16 @@ AddEventHandler('qb-bankrobbery:server:SetStationStatus', function(key, isHit)
     end
 end)
 
+QBCore.Functions.CreateCallback("thermite:server:check", function(source, cb)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if Player.Functions.RemoveItem("thermite", 1) then
+        TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items["thermite"], "remove")
+        cb(true)
+    else
+        cb(false)
+    end
+end)
+
 RegisterServerEvent('thermite:StartServerFire')
 AddEventHandler('thermite:StartServerFire', function(coords, maxChildren, isGasFire)
     TriggerClientEvent("thermite:StartFire", -1, coords, maxChildren, isGasFire)

@@ -148,34 +148,41 @@ RegisterNUICallback('thermiteclick', function()
 end)
 
 RegisterNUICallback('thermitefailed', function()
-    PlaySound(-1, "Place_Prop_Fail", "DLC_Dmod_Prop_Editor_Sounds", 0, 0, 1)
-    TriggerServerEvent("QBCore:Server:RemoveItem", "thermite", 1)
-    TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["thermite"], "remove")
-    ClearPedTasks(PlayerPedId())
-    local coords = GetEntityCoords(PlayerPedId())
-    local randTime = math.random(10000, 15000)
-    CreateFire(coords, randTime)
+    QBCore.Functions.TriggerCallback("thermite:server:check", function(success)
+        if success then
+            PlaySound(-1, "Place_Prop_Fail", "DLC_Dmod_Prop_Editor_Sounds", 0, 0, 1)
+            ClearPedTasks(PlayerPedId())
+            local coords = GetEntityCoords(PlayerPedId())
+            local randTime = math.random(10000, 15000)
+
+            CreateFire(coords, randTime)
+        end
+    end)
 end)
 
 RegisterNUICallback('thermitesuccess', function()
-    ClearPedTasks(PlayerPedId())
-    local time = 3
-    local coords = GetEntityCoords(PlayerPedId())
-    while time > 0 do 
-        QBCore.Functions.Notify("Thermite is going off in " .. time .. "..")
-        Citizen.Wait(1000)
-        time = time - 1
-    end
-    local randTime = math.random(10000, 15000)
-    CreateFire(coords, randTime)
-    if currentStation ~= 0 then
-        QBCore.Functions.Notify("The fuses are broken", "success")
-        TriggerServerEvent("qb-bankrobbery:server:SetStationStatus", currentStation, true)
-    elseif currentGate ~= 0 then
-        QBCore.Functions.Notify("The door is open", "success")
-        TriggerServerEvent('qb-doorlock:server:updateState', currentGate, false)
-        currentGate = 0
-    end
+    QBCore.Functions.TriggerCallback("thermite:server:check", function(success)
+        if success then
+            ClearPedTasks(PlayerPedId())
+            local time = 3
+            local coords = GetEntityCoords(PlayerPedId())
+            while time > 0 do 
+                QBCore.Functions.Notify("Thermite is going off in " .. time .. "..")
+                Citizen.Wait(1000)
+                time = time - 1
+            end
+            local randTime = math.random(10000, 15000)
+            CreateFire(coords, randTime)
+            if currentStation ~= 0 then
+                QBCore.Functions.Notify("The fuses are broken", "success")
+                TriggerServerEvent("qb-bankrobbery:server:SetStationStatus", currentStation, true)
+            elseif currentGate ~= 0 then
+                QBCore.Functions.Notify("The door is open", "success")
+                TriggerServerEvent('qb-doorlock:server:updateState', currentGate, false)
+                currentGate = 0
+            end
+        end
+    end)
 end)
 
 RegisterNUICallback('closethermite', function()
