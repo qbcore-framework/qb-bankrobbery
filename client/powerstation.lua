@@ -73,13 +73,13 @@ RegisterNetEvent("thermite:StartFire")
 AddEventHandler("thermite:StartFire", function(coords, maxChildren, isGasFire)
     if #(vector3(coords.x, coords.y, coords.z) - GetEntityCoords(PlayerPedId())) < 100 then
         local pos = {
-            x = coords.x, 
+            x = coords.x,
             y = coords.y,
             z = coords.z,
         }
         pos.z = pos.z - 0.9
         local fire = StartScriptFire(pos.x, pos.y, pos.z, maxChildren, isGasFire)
-        table.insert(currentFires, fire)
+        currentFires[#currentFires+1] = fire
     end
 end)
 
@@ -166,7 +166,7 @@ RegisterNUICallback('thermitesuccess', function()
             ClearPedTasks(PlayerPedId())
             local time = 3
             local coords = GetEntityCoords(PlayerPedId())
-            while time > 0 do 
+            while time > 0 do
                 QBCore.Functions.Notify("Thermite is going off in " .. time .. "..")
                 Citizen.Wait(1000)
                 time = time - 1
