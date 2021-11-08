@@ -7,28 +7,28 @@ local refreshed = false
 currentThermiteGate = 0
 CurrentCops = 0
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
-        Citizen.Wait(1000 * 60 * 5)
+        Wait(1000 * 60 * 5)
         if copsCalled then
             copsCalled = false
         end
     end
 end)
 
-RegisterNetEvent('QBCore:Client:OnJobUpdate')
-AddEventHandler('QBCore:Client:OnJobUpdate', function(JobInfo)
+
+RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
     onDuty = true
 end)
 
-RegisterNetEvent('police:SetCopCount')
-AddEventHandler('police:SetCopCount', function(amount)
+
+RegisterNetEvent('police:SetCopCount', function(amount)
     CurrentCops = amount
 end)
 
-RegisterNetEvent("QBCore:Client:OnPlayerLoaded")
-AddEventHandler("QBCore:Client:OnPlayerLoaded", function()
+
+RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
     PlayerJob = QBCore.Functions.GetPlayerData().job
     QBCore.Functions.TriggerCallback('qb-bankrobbery:server:GetConfig', function(config)
         Config = config
@@ -37,7 +37,7 @@ AddEventHandler("QBCore:Client:OnPlayerLoaded", function()
     ResetBankDoors()
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     Wait(500)
     if QBCore.Functions.GetPlayerData() ~= nil then
         PlayerJob = QBCore.Functions.GetPlayerData().job
@@ -45,14 +45,14 @@ Citizen.CreateThread(function()
     end
 end)
 
-RegisterNetEvent('QBCore:Client:SetDuty')
-AddEventHandler('QBCore:Client:SetDuty', function(duty)
+
+RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
     onDuty = duty
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
-        Citizen.Wait(1000)
+        Wait(1000)
         if inRange then
             if not refreshed then
                 ResetBankDoors()
