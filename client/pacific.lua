@@ -3,8 +3,8 @@ local requiredItemsShowed2 = false
 local requiredItemsShowed3 = false
 local requiredItemsShowed4 = false
 
-Citizen.CreateThread(function()
-    Citizen.Wait(2000)
+CreateThread(function()
+    Wait(2000)
     local requiredItems3 = {
         [1] = {name = QBCore.Shared.Items["thermite"]["name"], image = QBCore.Shared.Items["thermite"]["image"]},
     }
@@ -98,20 +98,20 @@ Citizen.CreateThread(function()
                 end
             end
             if not inRange then
-                Citizen.Wait(2500)
+                Wait(2500)
             end
         end
-        Citizen.Wait(1)
+        Wait(1)
     end
 end)
 
-Citizen.CreateThread(function()
-    Citizen.Wait(2000)
+CreateThread(function()
+    Wait(2000)
     local requiredItems4 = {
         [1] = {name = QBCore.Shared.Items["thermite"]["name"], image = QBCore.Shared.Items["thermite"]["image"]},
     }
     while true do 
-        Citizen.Wait(1)
+        Wait(1)
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
         local inRange = false
@@ -140,8 +140,7 @@ Citizen.CreateThread(function()
     end
 end)
 
-RegisterNetEvent('electronickit:UseElectronickit')
-AddEventHandler('electronickit:UseElectronickit', function()
+RegisterNetEvent('electronickit:UseElectronickit', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     local dist = #(pos - Config.BigBanks["pacific"]["coords"][2])
@@ -174,7 +173,7 @@ AddEventHandler('electronickit:UseElectronickit', function()
                                         TriggerEvent("mhacking:start", math.random(5, 9), math.random(10, 15), OnHackPacificDone)
                                 
                                         if not copsCalled then
-                                            local s1, s2 = Citizen.InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
+                                            local s1, s2 = InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, PointerValueInt(), PointerValueInt())
                                             local street1 = GetStreetNameFromHashKey(s1)
                                             local street2 = GetStreetNameFromHashKey(s2)
                                             local streetLabel = street1
@@ -208,8 +207,7 @@ AddEventHandler('electronickit:UseElectronickit', function()
     end
 end)
 
-RegisterNetEvent('qb-bankrobbery:UseBankcardB')
-AddEventHandler('qb-bankrobbery:UseBankcardB', function()
+RegisterNetEvent('qb-bankrobbery:UseBankcardB', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     local dist = #(pos - Config.BigBanks["pacific"]["coords"][1])
@@ -236,7 +234,7 @@ AddEventHandler('qb-bankrobbery:UseBankcardB', function()
                             TriggerServerEvent('qb-doorlock:server:updateState', 1, false)
                             TriggerServerEvent("QBCore:Server:RemoveItem", "security_card_02", 1)
                             if not copsCalled then
-                                local s1, s2 = Citizen.InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
+                                local s1, s2 = InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, PointerValueInt(), PointerValueInt())
                                 local street1 = GetStreetNameFromHashKey(s1)
                                 local street2 = GetStreetNameFromHashKey(s2)
                                 local streetLabel = street1
@@ -280,7 +278,7 @@ function OpenPacificDoor()
     local entHeading = Config.BigBanks["pacific"]["heading"].closed
 
     if object ~= 0 then
-        Citizen.CreateThread(function()
+        CreateThread(function()
             while true do
 
                 if entHeading > Config.BigBanks["pacific"]["heading"].open then
@@ -290,7 +288,7 @@ function OpenPacificDoor()
                     break
                 end
 
-                Citizen.Wait(10)
+                Wait(10)
             end
         end)
     end
