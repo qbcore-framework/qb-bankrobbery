@@ -3,7 +3,7 @@ local currentStation = 0
 local currentFires = {}
 local currentGate = 0
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
@@ -20,17 +20,17 @@ Citizen.CreateThread(function()
             end
 
             if not inRange then
-                Citizen.Wait(1000)
+                Wait(1000)
                 closestStation = 0
             end
         end
-        Citizen.Wait(3)
+        Wait(3)
     end
 end)
 local requiredItemsShowed = false
 local requiredItems = {}
-Citizen.CreateThread(function()
-    Citizen.Wait(2000)
+CreateThread(function()
+    Wait(2000)
     requiredItems = {
         [1] = {name = QBCore.Shared.Items["thermite"]["name"], image = QBCore.Shared.Items["thermite"]["image"]},
     }
@@ -56,21 +56,19 @@ Citizen.CreateThread(function()
                     end
                 end
             else
-                Citizen.Wait(1500)
+                Wait(1500)
             end
         end
 
-        Citizen.Wait(1)
+        Wait(1)
     end
 end)
 
-RegisterNetEvent('police:SetCopCount')
-AddEventHandler('police:SetCopCount', function(amount)
+RegisterNetEvent('police:SetCopCount', function(amount)
     CurrentCops = amount
 end)
 
-RegisterNetEvent("thermite:StartFire")
-AddEventHandler("thermite:StartFire", function(coords, maxChildren, isGasFire)
+RegisterNetEvent("thermite:StartFire", function(coords, maxChildren, isGasFire)
     if #(vector3(coords.x, coords.y, coords.z) - GetEntityCoords(PlayerPedId())) < 100 then
         local pos = {
             x = coords.x,
@@ -83,15 +81,13 @@ AddEventHandler("thermite:StartFire", function(coords, maxChildren, isGasFire)
     end
 end)
 
-RegisterNetEvent("thermite:StopFires")
-AddEventHandler("thermite:StopFires", function()
+RegisterNetEvent("thermite:StopFires", function()
     for k, v in ipairs(currentFires) do
         RemoveScriptFire(v)
     end
 end)
 
-RegisterNetEvent('thermite:UseThermite')
-AddEventHandler('thermite:UseThermite', function()
+RegisterNetEvent('thermite:UseThermite', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     if closestStation ~= 0 then
@@ -138,8 +134,7 @@ AddEventHandler('thermite:UseThermite', function()
     end
 end)
 
-RegisterNetEvent('qb-bankrobbery:client:SetStationStatus')
-AddEventHandler('qb-bankrobbery:client:SetStationStatus', function(key, isHit)
+RegisterNetEvent('qb-bankrobbery:client:SetStationStatus', function(key, isHit)
     Config.PowerStations[key].hit = isHit
 end)
 
@@ -168,7 +163,7 @@ RegisterNUICallback('thermitesuccess', function()
             local coords = GetEntityCoords(PlayerPedId())
             while time > 0 do
                 QBCore.Functions.Notify("Thermite is going off in " .. time .. "..")
-                Citizen.Wait(1000)
+                Wait(1000)
                 time = time - 1
             end
             local randTime = math.random(10000, 15000)
@@ -193,6 +188,6 @@ function CreateFire(coords, time)
     for i = 1, math.random(1, 7), 1 do
         TriggerServerEvent("thermite:StartServerFire", coords, 24, false)
     end
-    Citizen.Wait(time)
+    Wait(time)
     TriggerServerEvent("thermite:StopFires")
 end
