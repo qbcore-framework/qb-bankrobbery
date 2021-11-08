@@ -1,4 +1,4 @@
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
@@ -43,15 +43,14 @@ Citizen.CreateThread(function()
         end
 
         if not inRange then
-            Citizen.Wait(5000)
+            Wait(5000)
         end
 
-        Citizen.Wait(1000)
+        Wait(1000)
     end
 end)
 
-RegisterNetEvent('qb-bankrobbery:client:ClearTimeoutDoors')
-AddEventHandler('qb-bankrobbery:client:ClearTimeoutDoors', function()
+RegisterNetEvent('qb-bankrobbery:client:ClearTimeoutDoors', function()
     TriggerServerEvent('qb-doorlock:server:updateState', 85, true)
     local PaletoObject = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
     if PaletoObject ~= 0 then
