@@ -64,7 +64,7 @@ CreateThread(function()
     end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
@@ -82,17 +82,17 @@ Citizen.CreateThread(function()
             end
 
             if not inRange then
-                Citizen.Wait(2000)
+                Wait(2000)
                 closestBank = nil
             end
         end
 
-        Citizen.Wait(3)
+        Wait(3)
     end
 end)
 
-Citizen.CreateThread(function()
-    Citizen.Wait(2000)
+CreateThread(function()
+    Wait(2000)
     local requiredItems = {
         [1] = {name = QBCore.Shared.Items["electronickit"]["name"], image = QBCore.Shared.Items["electronickit"]["image"]},
         [2] = {name = QBCore.Shared.Items["trojan_usb"]["name"], image = QBCore.Shared.Items["trojan_usb"]["image"]},
@@ -143,11 +143,11 @@ Citizen.CreateThread(function()
                     end
                 end
             else
-                Citizen.Wait(2500)
+                Wait(2500)
             end
         end
 
-        Citizen.Wait(1)
+        Wait(1)
     end
 end)
 
@@ -166,8 +166,7 @@ function DrawText3Ds(x, y, z, text)
     ClearDrawOrigin()
 end
 
-RegisterNetEvent('electronickit:UseElectronickit')
-AddEventHandler('electronickit:UseElectronickit', function()
+RegisterNetEvent('electronickit:UseElectronickit', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     if math.random(1, 100) <= 85 and not IsWearingHandshoes() then
@@ -204,7 +203,7 @@ AddEventHandler('electronickit:UseElectronickit', function()
                                             TriggerEvent("mhacking:show")
                                             TriggerEvent("mhacking:start", math.random(6, 7), math.random(12, 15), OnHackDone)
                                             if not copsCalled then
-                                                local s1, s2 = Citizen.InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
+                                                local s1, s2 = InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, PointerValueInt(), PointerValueInt())
                                                 local street1 = GetStreetNameFromHashKey(s1)
                                                 local street2 = GetStreetNameFromHashKey(s2)
                                                 local streetLabel = street1
@@ -239,8 +238,7 @@ AddEventHandler('electronickit:UseElectronickit', function()
     end
 end)
 
-RegisterNetEvent('qb-bankrobbery:client:setBankState')
-AddEventHandler('qb-bankrobbery:client:setBankState', function(bankId, state)
+RegisterNetEvent('qb-bankrobbery:client:setBankState', function(bankId, state)
     if bankId == "paleto" then
         Config.BigBanks["paleto"]["isOpened"] = state
         if state then
@@ -259,22 +257,19 @@ AddEventHandler('qb-bankrobbery:client:setBankState', function(bankId, state)
     end
 end)
 
-RegisterNetEvent('qb-bankrobbery:client:enableAllBankSecurity')
-AddEventHandler('qb-bankrobbery:client:enableAllBankSecurity', function()
+RegisterNetEvent('qb-bankrobbery:client:enableAllBankSecurity', function()
     for k, v in pairs(Config.SmallBanks) do
         Config.SmallBanks[k]["alarm"] = true
     end
 end)
 
-RegisterNetEvent('qb-bankrobbery:client:disableAllBankSecurity')
-AddEventHandler('qb-bankrobbery:client:disableAllBankSecurity', function()
+RegisterNetEvent('qb-bankrobbery:client:disableAllBankSecurity', function()
     for k, v in pairs(Config.SmallBanks) do
         Config.SmallBanks[k]["alarm"] = false
     end
 end)
 
-RegisterNetEvent('qb-bankrobbery:client:BankSecurity')
-AddEventHandler('qb-bankrobbery:client:BankSecurity', function(key, status)
+RegisterNetEvent('qb-bankrobbery:client:BankSecurity', function(key, status)
     Config.SmallBanks[key]["alarm"] = status
 end)
 
@@ -284,7 +279,7 @@ function OpenBankDoor(bankId)
     local entHeading = Config.SmallBanks[bankId]["heading"].closed
 
     if object ~= 0 then
-        Citizen.CreateThread(function()
+        CreateThread(function()
             while true do
 
                 if entHeading ~= Config.SmallBanks[bankId]["heading"].open then
@@ -294,7 +289,7 @@ function OpenBankDoor(bankId)
                     break
                 end
 
-                Citizen.Wait(10)
+                Wait(10)
             end
         end)
     end
@@ -382,10 +377,10 @@ function openLocker(bankId, lockerId)
                     QBCore.Functions.Notify("Canceled..", "error")
                     IsDrilling = false
                 end)
-                Citizen.CreateThread(function()
+                CreateThread(function()
                     while IsDrilling do
                         TriggerServerEvent('hud:server:GainStress', math.random(4, 8))
-                        Citizen.Wait(10000)
+                        Wait(10000)
                     end
                 end)
             else
@@ -425,10 +420,10 @@ function openLocker(bankId, lockerId)
                     QBCore.Functions.Notify("Canceled..", "error")
                     IsDrilling = false
                 end)
-                Citizen.CreateThread(function()
+                CreateThread(function()
                     while IsDrilling do
                         TriggerServerEvent('hud:server:GainStress', math.random(4, 8))
-                        Citizen.Wait(10000)
+                        Wait(10000)
                     end
                 end)
             else
@@ -460,17 +455,16 @@ function openLocker(bankId, lockerId)
             QBCore.Functions.Notify("Canceled..", "error")
             IsDrilling = false
         end)
-        Citizen.CreateThread(function()
+        CreateThread(function()
             while IsDrilling do
                 TriggerServerEvent('hud:server:GainStress', math.random(4, 8))
-                Citizen.Wait(10000)
+                Wait(10000)
             end
         end)
     end
 end
 
-RegisterNetEvent('qb-bankrobbery:client:setLockerState')
-AddEventHandler('qb-bankrobbery:client:setLockerState', function(bankId, lockerId, state, bool)
+RegisterNetEvent('qb-bankrobbery:client:setLockerState', function(bankId, lockerId, state, bool)
     if bankId == "paleto" then
         Config.BigBanks["paleto"]["lockers"][lockerId][state] = bool
     elseif bankId == "pacific" then
@@ -480,8 +474,7 @@ AddEventHandler('qb-bankrobbery:client:setLockerState', function(bankId, lockerI
     end
 end)
 
-RegisterNetEvent('qb-bankrobbery:client:ResetFleecaLockers')
-AddEventHandler('qb-bankrobbery:client:ResetFleecaLockers', function(BankId)
+RegisterNetEvent('qb-bankrobbery:client:ResetFleecaLockers', function(BankId)
     Config.SmallBanks[BankId]["isOpened"] = false
     for k,_ in pairs(Config.SmallBanks[BankId]["lockers"]) do
         Config.SmallBanks[BankId]["lockers"][k]["isOpened"] = false
@@ -489,8 +482,7 @@ AddEventHandler('qb-bankrobbery:client:ResetFleecaLockers', function(BankId)
     end
 end)
 
-RegisterNetEvent('qb-bankrobbery:client:robberyCall')
-AddEventHandler('qb-bankrobbery:client:robberyCall', function(type, key, streetLabel, coords)
+RegisterNetEvent('qb-bankrobbery:client:robberyCall', function(type, key, streetLabel, coords)
     if PlayerJob.name == "police" and onDuty then 
         local cameraId = 4
         local bank = "Fleeca"
@@ -526,11 +518,11 @@ AddEventHandler('qb-bankrobbery:client:robberyCall', function(type, key, streetL
             cameraId = Config.BigBanks["paleto"]["camId"]
             bank = "Blaine County Savings"
             PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-            Citizen.Wait(100)
+            Wait(100)
             PlaySoundFrontend( -1, "Beep_Red", "DLC_HEIST_HACKING_SNAKE_SOUNDS", 1 )
-            Citizen.Wait(100)
+            Wait(100)
             PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-            Citizen.Wait(100)
+            Wait(100)
             PlaySoundFrontend( -1, "Beep_Red", "DLC_HEIST_HACKING_SNAKE_SOUNDS", 1 )
             TriggerEvent('qb-policealerts:client:AddPoliceAlert', {
                 timeOut = 10000,
@@ -555,11 +547,11 @@ AddEventHandler('qb-bankrobbery:client:robberyCall', function(type, key, streetL
         elseif type == "pacific" then
             bank = "Pacific Standard Bank"
             PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-            Citizen.Wait(100)
+            Wait(100)
             PlaySoundFrontend( -1, "Beep_Red", "DLC_HEIST_HACKING_SNAKE_SOUNDS", 1 )
-            Citizen.Wait(100)
+            Wait(100)
             PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-            Citizen.Wait(100)
+            Wait(100)
             PlaySoundFrontend( -1, "Beep_Red", "DLC_HEIST_HACKING_SNAKE_SOUNDS", 1 )
             TriggerEvent('qb-policealerts:client:AddPoliceAlert', {
                 timeOut = 10000,
@@ -628,7 +620,7 @@ end)
 function loadAnimDict( dict )
     while ( not HasAnimDictLoaded( dict ) ) do
         RequestAnimDict( dict )
-        Citizen.Wait( 5 )
+        Wait( 5 )
     end
 end 
 
