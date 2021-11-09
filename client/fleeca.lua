@@ -7,12 +7,11 @@ local refreshed = false
 currentThermiteGate = 0
 CurrentCops = 0
 
-CreateThread(function()
-    while true do
-        Wait(1000 * 60 * 5)
-        if copsCalled then
-            copsCalled = false
-        end
+-- Handlers
+
+AddEventHandler('onResourceStop', function(resource)
+    if resource == GetCurrentResourceName() then
+        ResetBankDoors()
     end
 end)
 
@@ -34,120 +33,9 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     ResetBankDoors()
 end)
 
-CreateThread(function()
-    Wait(500)
-    if QBCore.Functions.GetPlayerData() ~= nil then
-        PlayerJob = QBCore.Functions.GetPlayerData().job
-        onDuty = true
-    end
-end)
+-- Functions
 
-RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
-    onDuty = duty
-end)
-
-CreateThread(function()
-    while true do
-        Wait(1000)
-        if inRange then
-            if not refreshed then
-                ResetBankDoors()
-                refreshed = true
-            end
-        else
-            refreshed = false
-        end
-    end
-end)
-
-CreateThread(function()
-    while true do
-        local ped = PlayerPedId()
-        local pos = GetEntityCoords(ped)
-        local dist
-
-        if QBCore ~= nil then
-            inRange = false
-
-            for k, v in pairs(Config.SmallBanks) do
-                dist = #(pos - Config.SmallBanks[k]["coords"])
-                if dist < 15 then
-                    closestBank = k
-                    inRange = true
-                end
-            end
-
-            if not inRange then
-                Wait(2000)
-                closestBank = nil
-            end
-        end
-
-        Wait(3)
-    end
-end)
-
-CreateThread(function()
-    Wait(2000)
-    local requiredItems = {
-        [1] = {name = QBCore.Shared.Items["electronickit"]["name"], image = QBCore.Shared.Items["electronickit"]["image"]},
-        [2] = {name = QBCore.Shared.Items["trojan_usb"]["name"], image = QBCore.Shared.Items["trojan_usb"]["image"]},
-    }
-    local requiredItems2 = {
-        [1] = {name = QBCore.Shared.Items["thermite"]["name"], image = QBCore.Shared.Items["thermite"]["image"]},
-    }
-    while true do
-        local ped = PlayerPedId()
-        local pos = GetEntityCoords(ped)
-
-        if QBCore ~= nil then
-            if closestBank ~= nil then
-                if not Config.SmallBanks[closestBank]["isOpened"] then
-                    local dist = #(pos - Config.SmallBanks[closestBank]["coords"])
-                    if dist < 1 then
-                        if not requiredItemsShowed then
-                            requiredItemsShowed = true
-                            TriggerEvent('inventory:client:requiredItems', requiredItems, true)
-                        end
-                    else
-                        if requiredItemsShowed then
-                            requiredItemsShowed = false
-                            TriggerEvent('inventory:client:requiredItems', requiredItems, false)
-                        end
-                    end
-                end
-                if Config.SmallBanks[closestBank]["isOpened"] then
-                    for k, v in pairs(Config.SmallBanks[closestBank]["lockers"]) do
-                        local lockerDist = #(pos - Config.SmallBanks[closestBank]["lockers"][k]["coords"])
-                        if not Config.SmallBanks[closestBank]["lockers"][k]["isBusy"] then
-                            if not Config.SmallBanks[closestBank]["lockers"][k]["isOpened"] then
-                                if lockerDist < 5 then
-                                    DrawMarker(2, Config.SmallBanks[closestBank]["lockers"][k]["coords"].x, Config.SmallBanks[closestBank]["lockers"][k]["coords"].y, Config.SmallBanks[closestBank]["lockers"][k]["coords"].z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.05, 255, 255, 255, 255, false, false, false, 1, false, false, false)
-                                    if lockerDist < 0.5 then
-                                        DrawText3Ds(Config.SmallBanks[closestBank]["lockers"][k]["coords"].x, Config.SmallBanks[closestBank]["lockers"][k]["coords"].y, Config.SmallBanks[closestBank]["lockers"][k]["coords"].z + 0.3, '[E] Break open the safe')
-                                        if IsControlJustPressed(0, 38) then
-                                            if CurrentCops >= Config.MinimumFleecaPolice then
-                                                openLocker(closestBank, k)
-                                            else
-                                                QBCore.Functions.Notify('Minimum Of '..Config.MinimumFleecaPolice..' Police Needed', "error") 
-                                            end
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-            else
-                Wait(2500)
-            end
-        end
-
-        Wait(1)
-    end
-end)
-
-function DrawText3Ds(x, y, z, text)
+function DrawText3Ds(x, y, z, text) -- Globally used
 	SetTextScale(0.35, 0.35)
     SetTextFont(4)
     SetTextProportional(1)
@@ -162,118 +50,59 @@ function DrawText3Ds(x, y, z, text)
     ClearDrawOrigin()
 end
 
-RegisterNetEvent('electronickit:UseElectronickit', function()
-    local ped = PlayerPedId()
-    local pos = GetEntityCoords(ped)
-    if math.random(1, 100) <= 85 and not IsWearingHandshoes() then
-        TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
-    end
-    if closestBank ~= nil then
-        QBCore.Functions.TriggerCallback('qb-bankrobbery:server:isRobberyActive', function(isBusy)
-            if not isBusy then
-                if closestBank ~= nil then
-                    local dist = #(pos - Config.SmallBanks[closestBank]["coords"])
-                    if dist < 1.5 then
-                        if CurrentCops >= Config.MinimumFleecaPolice then
-                            if not Config.SmallBanks[closestBank]["isOpened"] then 
-                                QBCore.Functions.TriggerCallback('QBCore:HasItem', function(result)
-                                    if result then 
-                                        TriggerEvent('inventory:client:requiredItems', requiredItems, false)
-                                        QBCore.Functions.Progressbar("hack_gate", "Connecting the hacking device ..", math.random(5000, 10000), false, true, {
-                                            disableMovement = true,
-                                            disableCarMovement = true,
-                                            disableMouse = false,
-                                            disableCombat = true,
-                                        }, {
-                                            animDict = "anim@gangops@facility@servers@",
-                                            anim = "hotwire",
-                                            flags = 16,
-                                        }, {}, {}, function() -- Done
-                                            StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                                            
-                                            TriggerServerEvent("QBCore:Server:RemoveItem", "electronickit", 1)
-                                            TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["electronickit"], "remove")
-                                            TriggerServerEvent("QBCore:Server:RemoveItem", "trojan_usb", 1)
-                                            TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["trojan_usb"], "remove")
+local function OpenPaletoDoor()
+    TriggerServerEvent('qb-doorlock:server:updateState', 85, false)
+    local object = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
+    local timeOut = 10
+    local entHeading = Config.BigBanks["paleto"]["heading"].closed
 
-                                            TriggerEvent("mhacking:show")
-                                            TriggerEvent("mhacking:start", math.random(6, 7), math.random(12, 15), OnHackDone)
-                                            if not copsCalled then
-                                                local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
-                                                local street1 = GetStreetNameFromHashKey(s1)
-                                                local street2 = GetStreetNameFromHashKey(s2)
-                                                local streetLabel = street1
-                                                if street2 ~= nil then 
-                                                    streetLabel = streetLabel .. " " .. street2
-                                                end
-                                                if Config.SmallBanks[closestBank]["alarm"] then
-                                                    TriggerServerEvent("qb-bankrobbery:server:callCops", "small", closestBank, streetLabel, pos)
-                                                    copsCalled = true
-                                                end
-                                            end
-                                        end, function() -- Cancel
-                                            StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                                            QBCore.Functions.Notify("Canceled..", "error")
-                                        end)
-                                    else
-                                        QBCore.Functions.Notify("You're missing an item ..", "error")
-                                    end
-                                end, "trojan_usb")
-                            else
-                                QBCore.Functions.Notify("Looks like the bank is already open ..", "error")
-                            end
-                        else
-                            QBCore.Functions.Notify('Minimum Of '..Config.MinimumFleecaPolice..' Police Needed', "error")
-                        end
-                    end
+    if object ~= 0 then
+        SetEntityHeading(object, Config.BigBanks["paleto"]["heading"].open)
+    end
+end
+
+local function OpenPacificDoor()
+    local object = GetClosestObjectOfType(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"], 20.0, Config.BigBanks["pacific"]["object"], false, false, false)
+    local timeOut = 10
+    local entHeading = Config.BigBanks["pacific"]["heading"].closed
+
+    if object ~= 0 then
+        CreateThread(function()
+            while true do
+
+                if entHeading > Config.BigBanks["pacific"]["heading"].open then
+                    SetEntityHeading(object, entHeading - 10)
+                    entHeading = entHeading - 0.5
+                else
+                    break
                 end
-            else
-                QBCore.Functions.Notify("The security lock is active, opening the door is currently not possible.", "error", 5500)
+
+                Wait(10)
             end
         end)
     end
-end)
+end
 
-RegisterNetEvent('qb-bankrobbery:client:setBankState', function(bankId, state)
-    if bankId == "paleto" then
-        Config.BigBanks["paleto"]["isOpened"] = state
-        if state then
-            OpenPaletoDoor()
-        end
-    elseif bankId == "pacific" then
-        Config.BigBanks["pacific"]["isOpened"] = state
-        if state then
-            OpenPacificDoor()
-        end
+local function OnHackDone(success)
+    if success then
+        TriggerEvent('mhacking:hide')
+        TriggerServerEvent('qb-bankrobbery:server:setBankState', closestBank, true)
     else
-        Config.SmallBanks[bankId]["isOpened"] = state
-        if state then
-            OpenBankDoor(bankId)
-        end
+		TriggerEvent('mhacking:hide')
+	end
+end
+
+local function loadAnimDict(dict)
+    while not HasAnimDictLoaded(dict) do
+        RequestAnimDict(dict)
+        Wait(5)
     end
-end)
+end
 
-RegisterNetEvent('qb-bankrobbery:client:enableAllBankSecurity', function()
-    for k, v in pairs(Config.SmallBanks) do
-        Config.SmallBanks[k]["alarm"] = true
-    end
-end)
-
-RegisterNetEvent('qb-bankrobbery:client:disableAllBankSecurity', function()
-    for k, v in pairs(Config.SmallBanks) do
-        Config.SmallBanks[k]["alarm"] = false
-    end
-end)
-
-RegisterNetEvent('qb-bankrobbery:client:BankSecurity', function(key, status)
-    Config.SmallBanks[key]["alarm"] = status
-end)
-
-function OpenBankDoor(bankId)
+local function OpenBankDoor(bankId)
     local object = GetClosestObjectOfType(Config.SmallBanks[bankId]["coords"]["x"], Config.SmallBanks[bankId]["coords"]["y"], Config.SmallBanks[bankId]["coords"]["z"], 5.0, Config.SmallBanks[bankId]["object"], false, false, false)
     local timeOut = 10
     local entHeading = Config.SmallBanks[bankId]["heading"].closed
-
     if object ~= 0 then
         CreateThread(function()
             while true do
@@ -291,7 +120,7 @@ function OpenBankDoor(bankId)
     end
 end
 
-function IsWearingHandshoes()
+function IsWearingHandshoes() -- Globally Used
     local armIndex = GetPedDrawableVariation(PlayerPedId(), 3)
     local model = GetEntityModel(PlayerPedId())
     local retval = true
@@ -307,7 +136,7 @@ function IsWearingHandshoes()
     return retval
 end
 
-function ResetBankDoors()
+local function ResetBankDoors()
     for k, v in pairs(Config.SmallBanks) do
         local object = GetClosestObjectOfType(Config.SmallBanks[k]["coords"]["x"], Config.SmallBanks[k]["coords"]["y"], Config.SmallBanks[k]["coords"]["z"], 5.0, Config.SmallBanks[k]["object"], false, false, false)
         if not Config.SmallBanks[k]["isOpened"] then
@@ -333,7 +162,7 @@ function ResetBankDoors()
     end
 end
 
-function openLocker(bankId, lockerId)
+function openLocker(bankId, lockerId) -- Globally Used
     local pos = GetEntityCoords(PlayerPedId())
     if math.random(1, 100) <= 65 and not IsWearingHandshoes() then
         TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
@@ -399,7 +228,7 @@ function openLocker(bankId, lockerId)
                     StopAnimTask(PlayerPedId(), "anim@heists@fleeca_bank@drilling", "drill_straight_idle", 1.0)
                     DetachEntity(DrillObject, true, true)
                     DeleteObject(DrillObject)
-                    
+
                     TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isOpened', true)
                     TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
                     TriggerServerEvent('qb-bankrobbery:server:recieveItem', 'pacific')
@@ -457,6 +286,115 @@ function openLocker(bankId, lockerId)
     end
 end
 
+-- Events
+
+RegisterNetEvent('electronickit:UseElectronickit', function()
+    local ped = PlayerPedId()
+    local pos = GetEntityCoords(ped)
+    if math.random(1, 100) <= 85 and not IsWearingHandshoes() then
+        TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
+    end
+    if closestBank ~= nil then
+        QBCore.Functions.TriggerCallback('qb-bankrobbery:server:isRobberyActive', function(isBusy)
+            if not isBusy then
+                if closestBank ~= nil then
+                    local dist = #(pos - Config.SmallBanks[closestBank]["coords"])
+                    if dist < 1.5 then
+                        if CurrentCops >= Config.MinimumFleecaPolice then
+                            if not Config.SmallBanks[closestBank]["isOpened"] then
+                                QBCore.Functions.TriggerCallback('QBCore:HasItem', function(result)
+                                    if result then
+                                        TriggerEvent('inventory:client:requiredItems', requiredItems, false)
+                                        QBCore.Functions.Progressbar("hack_gate", "Connecting the hacking device ..", math.random(5000, 10000), false, true, {
+                                            disableMovement = true,
+                                            disableCarMovement = true,
+                                            disableMouse = false,
+                                            disableCombat = true,
+                                        }, {
+                                            animDict = "anim@gangops@facility@servers@",
+                                            anim = "hotwire",
+                                            flags = 16,
+                                        }, {}, {}, function() -- Done
+                                            StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
+
+                                            TriggerServerEvent("QBCore:Server:RemoveItem", "electronickit", 1)
+                                            TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["electronickit"], "remove")
+                                            TriggerServerEvent("QBCore:Server:RemoveItem", "trojan_usb", 1)
+                                            TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["trojan_usb"], "remove")
+
+                                            TriggerEvent("mhacking:show")
+                                            TriggerEvent("mhacking:start", math.random(6, 7), math.random(12, 15), OnHackDone)
+                                            if not copsCalled then
+                                                local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
+                                                local street1 = GetStreetNameFromHashKey(s1)
+                                                local street2 = GetStreetNameFromHashKey(s2)
+                                                local streetLabel = street1
+                                                if street2 ~= nil then
+                                                    streetLabel = streetLabel .. " " .. street2
+                                                end
+                                                if Config.SmallBanks[closestBank]["alarm"] then
+                                                    TriggerServerEvent("qb-bankrobbery:server:callCops", "small", closestBank, streetLabel, pos)
+                                                    copsCalled = true
+                                                end
+                                            end
+                                        end, function() -- Cancel
+                                            StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
+                                            QBCore.Functions.Notify("Canceled..", "error")
+                                        end)
+                                    else
+                                        QBCore.Functions.Notify("You're missing an item ..", "error")
+                                    end
+                                end, "trojan_usb")
+                            else
+                                QBCore.Functions.Notify("Looks like the bank is already open ..", "error")
+                            end
+                        else
+                            QBCore.Functions.Notify('Minimum Of '..Config.MinimumFleecaPolice..' Police Needed', "error")
+                        end
+                    end
+                end
+            else
+                QBCore.Functions.Notify("The security lock is active, opening the door is currently not possible.", "error", 5500)
+            end
+        end)
+    end
+end)
+
+RegisterNetEvent('qb-bankrobbery:client:setBankState', function(bankId, state)
+    if bankId == "paleto" then
+        Config.BigBanks["paleto"]["isOpened"] = state
+        if state then
+            OpenPaletoDoor()
+        end
+    elseif bankId == "pacific" then
+        Config.BigBanks["pacific"]["isOpened"] = state
+        if state then
+            OpenPacificDoor()
+        end
+    else
+        Config.SmallBanks[bankId]["isOpened"] = state
+        if state then
+            OpenBankDoor(bankId)
+        end
+    end
+end)
+
+RegisterNetEvent('qb-bankrobbery:client:enableAllBankSecurity', function()
+    for k, v in pairs(Config.SmallBanks) do
+        Config.SmallBanks[k]["alarm"] = true
+    end
+end)
+
+RegisterNetEvent('qb-bankrobbery:client:disableAllBankSecurity', function()
+    for k, v in pairs(Config.SmallBanks) do
+        Config.SmallBanks[k]["alarm"] = false
+    end
+end)
+
+RegisterNetEvent('qb-bankrobbery:client:BankSecurity', function(key, status)
+    Config.SmallBanks[key]["alarm"] = status
+end)
+
 RegisterNetEvent('qb-bankrobbery:client:setLockerState', function(bankId, lockerId, state, bool)
     if bankId == "paleto" then
         Config.BigBanks["paleto"]["lockers"][lockerId][state] = bool
@@ -476,7 +414,7 @@ RegisterNetEvent('qb-bankrobbery:client:ResetFleecaLockers', function(BankId)
 end)
 
 RegisterNetEvent('qb-bankrobbery:client:robberyCall', function(type, key, streetLabel, coords)
-    if PlayerJob.name == "police" and onDuty then 
+    if PlayerJob.name == "police" and onDuty then
         local cameraId = 4
         local bank = "Fleeca"
         if type == "small" then
@@ -595,42 +533,123 @@ RegisterNetEvent('qb-bankrobbery:client:robberyCall', function(type, key, street
     end
 end)
 
-function OnHackDone(success, timeremaining)
-    if success then
-        TriggerEvent('mhacking:hide')
-        TriggerServerEvent('qb-bankrobbery:server:setBankState', closestBank, true)
-    else
-		TriggerEvent('mhacking:hide')
-	end
-end
+-- Threads
 
-AddEventHandler('onResourceStop', function(resource)
-    if resource == GetCurrentResourceName() then
-        ResetBankDoors()
+CreateThread(function()
+    while true do
+        Wait(1000 * 60 * 5)
+        if copsCalled then
+            copsCalled = false
+        end
     end
 end)
 
-function loadAnimDict( dict )
-    while ( not HasAnimDictLoaded( dict ) ) do
-        RequestAnimDict( dict )
-        Wait( 5 )
+CreateThread(function()
+    Wait(500)
+    if QBCore.Functions.GetPlayerData() ~= nil then
+        PlayerJob = QBCore.Functions.GetPlayerData().job
+        onDuty = true
     end
-end 
+end)
 
-function searchPockets()
-    if ( DoesEntityExist( PlayerPedId() ) and not IsEntityDead( PlayerPedId() ) ) then 
-        loadAnimDict( "random@mugging4" )
-        TaskPlayAnim( PlayerPedId(), "random@mugging4", "agitated_loop_a", 8.0, 1.0, -1, 16, 0, 0, 0, 0 )
-    end
-end
+RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
+    onDuty = duty
+end)
 
-function giveAnim()
-    if ( DoesEntityExist( PlayerPedId() ) and not IsEntityDead( PlayerPedId() ) ) then 
-        loadAnimDict( "mp_safehouselost@" )
-        if ( IsEntityPlayingAnim( PlayerPedId(), "mp_safehouselost@", "package_dropoff", 3 ) ) then 
-            TaskPlayAnim( PlayerPedId(), "mp_safehouselost@", "package_dropoff", 8.0, 1.0, -1, 16, 0, 0, 0, 0 )
+CreateThread(function()
+    while true do
+        Wait(1000)
+        if inRange then
+            if not refreshed then
+                ResetBankDoors()
+                refreshed = true
+            end
         else
-            TaskPlayAnim( PlayerPedId(), "mp_safehouselost@", "package_dropoff", 8.0, 1.0, -1, 16, 0, 0, 0, 0 )
-        end     
+            refreshed = false
+        end
     end
-end
+end)
+
+CreateThread(function()
+    while true do
+        local ped = PlayerPedId()
+        local pos = GetEntityCoords(ped)
+        local dist
+
+        if QBCore ~= nil then
+            inRange = false
+
+            for k, v in pairs(Config.SmallBanks) do
+                dist = #(pos - Config.SmallBanks[k]["coords"])
+                if dist < 15 then
+                    closestBank = k
+                    inRange = true
+                end
+            end
+
+            if not inRange then
+                Wait(2000)
+                closestBank = nil
+            end
+        end
+
+        Wait(3)
+    end
+end)
+
+CreateThread(function()
+    Wait(2000)
+    local requiredItems = {
+        [1] = {name = QBCore.Shared.Items["electronickit"]["name"], image = QBCore.Shared.Items["electronickit"]["image"]},
+        [2] = {name = QBCore.Shared.Items["trojan_usb"]["name"], image = QBCore.Shared.Items["trojan_usb"]["image"]},
+    }
+    while true do
+        local ped = PlayerPedId()
+        local pos = GetEntityCoords(ped)
+
+        if QBCore ~= nil then
+            if closestBank ~= nil then
+                if not Config.SmallBanks[closestBank]["isOpened"] then
+                    local dist = #(pos - Config.SmallBanks[closestBank]["coords"])
+                    if dist < 1 then
+                        if not requiredItemsShowed then
+                            requiredItemsShowed = true
+                            TriggerEvent('inventory:client:requiredItems', requiredItems, true)
+                        end
+                    else
+                        if requiredItemsShowed then
+                            requiredItemsShowed = false
+                            TriggerEvent('inventory:client:requiredItems', requiredItems, false)
+                        end
+                    end
+                end
+                if Config.SmallBanks[closestBank]["isOpened"] then
+                    for k, v in pairs(Config.SmallBanks[closestBank]["lockers"]) do
+                        local lockerDist = #(pos - Config.SmallBanks[closestBank]["lockers"][k]["coords"])
+                        if not Config.SmallBanks[closestBank]["lockers"][k]["isBusy"] then
+                            if not Config.SmallBanks[closestBank]["lockers"][k]["isOpened"] then
+                                if lockerDist < 5 then
+                                    DrawMarker(2, Config.SmallBanks[closestBank]["lockers"][k]["coords"].x, Config.SmallBanks[closestBank]["lockers"][k]["coords"].y, Config.SmallBanks[closestBank]["lockers"][k]["coords"].z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.05, 255, 255, 255, 255, false, false, false, 1, false, false, false)
+                                    if lockerDist < 0.5 then
+                                        DrawText3Ds(Config.SmallBanks[closestBank]["lockers"][k]["coords"].x, Config.SmallBanks[closestBank]["lockers"][k]["coords"].y, Config.SmallBanks[closestBank]["lockers"][k]["coords"].z + 0.3, '[E] Break open the safe')
+                                        if IsControlJustPressed(0, 38) then
+                                            if CurrentCops >= Config.MinimumFleecaPolice then
+                                                openLocker(closestBank, k)
+                                            else
+                                                QBCore.Functions.Notify('Minimum Of '..Config.MinimumFleecaPolice..' Police Needed', "error")
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            else
+                Wait(2500)
+            end
+        end
+
+        Wait(1)
+    end
+end)

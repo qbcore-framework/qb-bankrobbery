@@ -92,7 +92,7 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
         QBCore.Functions.TriggerCallback('qb-bankrobbery:server:isRobberyActive', function(isBusy)
             if not isBusy then
                 if CurrentCops >= Config.MinimumPaletoPolice then
-                    if not Config.BigBanks["paleto"]["isOpened"] then 
+                    if not Config.BigBanks["paleto"]["isOpened"] then
                         TriggerEvent('inventory:client:requiredItems', requiredItems, false)
                         QBCore.Functions.Progressbar("security_pass", "Validitating card..", math.random(5000, 10000), false, true, {
                             disableMovement = true,
@@ -113,7 +113,7 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
                                 local street1 = GetStreetNameFromHashKey(s1)
                                 local street2 = GetStreetNameFromHashKey(s2)
                                 local streetLabel = street1
-                                if street2 ~= nil then 
+                                if street2 ~= nil then
                                     streetLabel = streetLabel .. " " .. street2
                                 end
                                 if Config.BigBanks["paleto"]["alarm"] then
@@ -135,16 +135,5 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
                 QBCore.Functions.Notify("The security lock is active, the door cannot be opened at the moment..", "error", 5500)
             end
         end)
-    end 
-end)
-
-function OpenPaletoDoor()
-    TriggerServerEvent('qb-doorlock:server:updateState', 85, false)
-    local object = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
-    local timeOut = 10
-    local entHeading = Config.BigBanks["paleto"]["heading"].closed
-
-    if object ~= 0 then
-        SetEntityHeading(object, Config.BigBanks["paleto"]["heading"].open)
     end
-end
+end)

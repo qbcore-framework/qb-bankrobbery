@@ -7,25 +7,77 @@ local ItemList = {
     ["trojan_usb"] = "trojan_usb"
 }
 
-CreateThread(function()
-    while true do
-        Wait(1000 * 60 * 10)
-        if blackoutActive then
-            TriggerEvent("qb-weathersync:server:toggleBlackout")
-            TriggerClientEvent("police:client:EnableAllCameras", -1)
-            TriggerClientEvent("qb-bankrobbery:client:enableAllBankSecurity", -1)
-            blackoutActive = false
+-- Functions
+
+local function CheckStationHits()
+    if Config.PowerStations[1].hit and Config.PowerStations[2].hit and Config.PowerStations[3].hit then
+        TriggerClientEvent("police:client:SetCamera", -1, 19, false)
+    end
+    if Config.PowerStations[3].hit then
+        TriggerClientEvent("police:client:SetCamera", -1, 18, false)
+        TriggerClientEvent("police:client:SetCamera", -1, 7, false)
+    end
+    if Config.PowerStations[4].hit and Config.PowerStations[5].hit and Config.PowerStations[6].hit then
+        TriggerClientEvent("police:client:SetCamera", -1, 4, false)
+        TriggerClientEvent("police:client:SetCamera", -1, 8, false)
+        TriggerClientEvent("police:client:SetCamera", -1, 5, false)
+        TriggerClientEvent("police:client:SetCamera", -1, 6, false)
+    end
+    if Config.PowerStations[1].hit and Config.PowerStations[2].hit and Config.PowerStations[3].hit and Config.PowerStations[4].hit and Config.PowerStations[5].hit and Config.PowerStations[6].hit then
+        TriggerClientEvent("police:client:SetCamera", -1, 1, false)
+        TriggerClientEvent("police:client:SetCamera", -1, 2, false)
+        TriggerClientEvent("police:client:SetCamera", -1, 3, false)
+    end
+    if Config.PowerStations[7].hit and Config.PowerStations[8].hit then
+        TriggerClientEvent("police:client:SetCamera", -1, 9, false)
+        TriggerClientEvent("police:client:SetCamera", -1, 10, false)
+    end
+    if Config.PowerStations[9].hit then
+        TriggerClientEvent("police:client:SetCamera", -1, 11, false)
+        TriggerClientEvent("police:client:SetCamera", -1, 12, false)
+        TriggerClientEvent("police:client:SetCamera", -1, 13, false)
+    end
+    if Config.PowerStations[9].hit and Config.PowerStations[10].hit then
+        TriggerClientEvent("police:client:SetCamera", -1, 14, false)
+        TriggerClientEvent("police:client:SetCamera", -1, 17, false)
+        TriggerClientEvent("police:client:SetCamera", -1, 19, false)
+    end
+    if Config.PowerStations[7].hit and Config.PowerStations[9].hit and Config.PowerStations[10].hit then
+        TriggerClientEvent("police:client:SetCamera", -1, 15, false)
+        TriggerClientEvent("police:client:SetCamera", -1, 16, false)
+    end
+    if Config.PowerStations[10].hit then
+        TriggerClientEvent("police:client:SetCamera", -1, 20, false)
+    end
+    if Config.PowerStations[11].hit and Config.PowerStations[1].hit and Config.PowerStations[2].hit then
+        TriggerClientEvent("police:client:SetCamera", -1, 21, false)
+        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 1, false)
+        TriggerClientEvent("police:client:SetCamera", -1, 22, false)
+        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 2, false)
+    end
+    if Config.PowerStations[8].hit and Config.PowerStations[4].hit and Config.PowerStations[5].hit and Config.PowerStations[6].hit then
+        TriggerClientEvent("police:client:SetCamera", -1, 23, false)
+        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 3, false)
+    end
+    if Config.PowerStations[12].hit and Config.PowerStations[13].hit then
+        TriggerClientEvent("police:client:SetCamera", -1, 24, false)
+        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 4, false)
+        TriggerClientEvent("police:client:SetCamera", -1, 25, false)
+        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 5, false)
+    end
+end
+
+local function AllStationsHit()
+    local retval = true
+    for k, v in pairs(Config.PowerStations) do
+        if not Config.PowerStations[k].hit then
+            retval = false
         end
     end
-end)
+    return retval
+end
 
-CreateThread(function()
-    while true do
-        Wait(1000 * 60 * 30)
-        TriggerClientEvent("qb-bankrobbery:client:enableAllBankSecurity", -1)
-        TriggerClientEvent("police:client:EnableAllCameras", -1)
-    end
-end)
+-- Events
 
 RegisterNetEvent('qb-bankrobbery:server:setBankState', function(bankId, state)
     if bankId == "paleto" then
@@ -183,14 +235,6 @@ RegisterNetEvent('qb-bankrobbery:server:recieveItem', function(type)
     end
 end)
 
-QBCore.Functions.CreateCallback('qb-bankrobbery:server:isRobberyActive', function(source, cb)
-    cb(robberyBusy)
-end)
-
-QBCore.Functions.CreateCallback('qb-bankrobbery:server:GetConfig', function(source, cb)
-    cb(Config)
-end)
-
 RegisterNetEvent('qb-bankrobbery:server:setTimeout', function()
     if not robberyBusy then
         if not timeOut then
@@ -281,6 +325,32 @@ RegisterNetEvent('qb-bankrobbery:server:SetStationStatus', function(key, isHit)
     end
 end)
 
+RegisterNetEvent('thermite:StartServerFire', function(coords, maxChildren, isGasFire)
+    local src = source
+    local ped = GetPlayerPed(src)
+    local coords2 = GetEntityCoords(ped)
+    local thermiteCoords = Config.BigBanks['pacific'].thermite[1].coords
+    local thermite2Coords = Config.BigBanks['paleto'].thermite[1].coords
+    local thermite3Coords = Config.BigBanks['paleto'].thermite[2].coords
+    if #(coords2 - thermiteCoords) < 10 or #(coords2 - thermite2Coords) < 10 or #(coords2 - thermite3Coords) < 10 then
+        TriggerClientEvent("thermite:StartFire", -1, coords, maxChildren, isGasFire)
+    end
+end)
+
+RegisterNetEvent('thermite:StopFires', function()
+    TriggerClientEvent("thermite:StopFires", -1)
+end)
+
+-- Callbacks
+
+QBCore.Functions.CreateCallback('qb-bankrobbery:server:isRobberyActive', function(source, cb)
+    cb(robberyBusy)
+end)
+
+QBCore.Functions.CreateCallback('qb-bankrobbery:server:GetConfig', function(source, cb)
+    cb(Config)
+end)
+
 QBCore.Functions.CreateCallback("thermite:server:check", function(source, cb)
     local Player = QBCore.Functions.GetPlayer(source)
     if Player.Functions.RemoveItem("thermite", 1) then
@@ -291,81 +361,7 @@ QBCore.Functions.CreateCallback("thermite:server:check", function(source, cb)
     end
 end)
 
-RegisterNetEvent('thermite:StartServerFire', function(coords, maxChildren, isGasFire)
-    TriggerClientEvent("thermite:StartFire", -1, coords, maxChildren, isGasFire)
-end)
-
-RegisterNetEvent('thermite:StopFires', function(coords, maxChildren, isGasFire)
-    TriggerClientEvent("thermite:StopFires", -1)
-end)
-
-function CheckStationHits()
-    if Config.PowerStations[1].hit and Config.PowerStations[2].hit and Config.PowerStations[3].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 19, false)
-    end
-    if Config.PowerStations[3].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 18, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 7, false)
-    end
-    if Config.PowerStations[4].hit and Config.PowerStations[5].hit and Config.PowerStations[6].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 4, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 8, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 5, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 6, false)
-    end
-    if Config.PowerStations[1].hit and Config.PowerStations[2].hit and Config.PowerStations[3].hit and Config.PowerStations[4].hit and Config.PowerStations[5].hit and Config.PowerStations[6].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 1, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 2, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 3, false)
-    end
-    if Config.PowerStations[7].hit and Config.PowerStations[8].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 9, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 10, false)
-    end
-    if Config.PowerStations[9].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 11, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 12, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 13, false)
-    end
-    if Config.PowerStations[9].hit and Config.PowerStations[10].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 14, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 17, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 19, false)
-    end
-    if Config.PowerStations[7].hit and Config.PowerStations[9].hit and Config.PowerStations[10].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 15, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 16, false)
-    end
-    if Config.PowerStations[10].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 20, false)
-    end
-    if Config.PowerStations[11].hit and Config.PowerStations[1].hit and Config.PowerStations[2].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 21, false)
-        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 1, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 22, false)
-        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 2, false)
-    end
-    if Config.PowerStations[8].hit and Config.PowerStations[4].hit and Config.PowerStations[5].hit and Config.PowerStations[6].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 23, false)
-        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 3, false)
-    end
-    if Config.PowerStations[12].hit and Config.PowerStations[13].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 24, false)
-        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 4, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 25, false)
-        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 5, false)
-    end
-end
-
-function AllStationsHit()
-    local retval = true
-    for k, v in pairs(Config.PowerStations) do
-        if not Config.PowerStations[k].hit then
-            retval = false
-        end
-    end
-    return retval
-end
+-- Items
 
 QBCore.Functions.CreateUseableItem("thermite", function(source, item)
     local Player = QBCore.Functions.GetPlayer(source)
@@ -394,5 +390,27 @@ QBCore.Functions.CreateUseableItem("electronickit", function(source, item)
     local Player = QBCore.Functions.GetPlayer(source)
     if Player.Functions.GetItemByName('electronickit') ~= nil then
         TriggerClientEvent("electronickit:UseElectronickit", source)
+    end
+end)
+
+-- Threads
+
+CreateThread(function()
+    while true do
+        Wait(1000 * 60 * 10)
+        if blackoutActive then
+            TriggerEvent("qb-weathersync:server:toggleBlackout")
+            TriggerClientEvent("police:client:EnableAllCameras", -1)
+            TriggerClientEvent("qb-bankrobbery:client:enableAllBankSecurity", -1)
+            blackoutActive = false
+        end
+    end
+end)
+
+CreateThread(function()
+    while true do
+        Wait(1000 * 60 * 30)
+        TriggerClientEvent("qb-bankrobbery:client:enableAllBankSecurity", -1)
+        TriggerClientEvent("police:client:EnableAllCameras", -1)
     end
 end)
