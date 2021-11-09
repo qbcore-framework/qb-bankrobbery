@@ -9,6 +9,32 @@ CurrentCops = 0
 
 -- Handlers
 
+local function ResetBankDoors()
+    for k, v in pairs(Config.SmallBanks) do
+        local object = GetClosestObjectOfType(Config.SmallBanks[k]["coords"]["x"], Config.SmallBanks[k]["coords"]["y"], Config.SmallBanks[k]["coords"]["z"], 5.0, Config.SmallBanks[k]["object"], false, false, false)
+        if not Config.SmallBanks[k]["isOpened"] then
+            SetEntityHeading(object, Config.SmallBanks[k]["heading"].closed)
+        else
+            SetEntityHeading(object, Config.SmallBanks[k]["heading"].open)
+        end
+    end
+    if not Config.BigBanks["paleto"]["isOpened"] then
+        local paletoObject = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
+        SetEntityHeading(paletoObject, Config.BigBanks["paleto"]["heading"].closed)
+    else
+        local paletoObject = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
+        SetEntityHeading(paletoObject, Config.BigBanks["paleto"]["heading"].open)
+    end
+
+    if not Config.BigBanks["pacific"]["isOpened"] then
+        local pacificObject = GetClosestObjectOfType(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"], 20.0, Config.BigBanks["pacific"]["object"], false, false, false)
+        SetEntityHeading(pacificObject, Config.BigBanks["pacific"]["heading"].closed)
+    else
+        local pacificObject = GetClosestObjectOfType(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"], 20.0, Config.BigBanks["pacific"]["object"], false, false, false)
+        SetEntityHeading(pacificObject, Config.BigBanks["pacific"]["heading"].open)
+    end
+end
+
 AddEventHandler('onResourceStop', function(resource)
     if resource == GetCurrentResourceName() then
         ResetBankDoors()
@@ -134,32 +160,6 @@ function IsWearingHandshoes() -- Globally Used
         end
     end
     return retval
-end
-
-local function ResetBankDoors()
-    for k, v in pairs(Config.SmallBanks) do
-        local object = GetClosestObjectOfType(Config.SmallBanks[k]["coords"]["x"], Config.SmallBanks[k]["coords"]["y"], Config.SmallBanks[k]["coords"]["z"], 5.0, Config.SmallBanks[k]["object"], false, false, false)
-        if not Config.SmallBanks[k]["isOpened"] then
-            SetEntityHeading(object, Config.SmallBanks[k]["heading"].closed)
-        else
-            SetEntityHeading(object, Config.SmallBanks[k]["heading"].open)
-        end
-    end
-    if not Config.BigBanks["paleto"]["isOpened"] then
-        local paletoObject = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
-        SetEntityHeading(paletoObject, Config.BigBanks["paleto"]["heading"].closed)
-    else
-        local paletoObject = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
-        SetEntityHeading(paletoObject, Config.BigBanks["paleto"]["heading"].open)
-    end
-
-    if not Config.BigBanks["pacific"]["isOpened"] then
-        local pacificObject = GetClosestObjectOfType(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"], 20.0, Config.BigBanks["pacific"]["object"], false, false, false)
-        SetEntityHeading(pacificObject, Config.BigBanks["pacific"]["heading"].closed)
-    else
-        local pacificObject = GetClosestObjectOfType(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"], 20.0, Config.BigBanks["pacific"]["object"], false, false, false)
-        SetEntityHeading(pacificObject, Config.BigBanks["pacific"]["heading"].open)
-    end
 end
 
 function openLocker(bankId, lockerId) -- Globally Used
