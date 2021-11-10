@@ -1,3 +1,4 @@
+local QBCore = exports['qb-core']:GetCoreObject()
 local robberyBusy = false
 local timeOut = false
 local blackoutActive = false

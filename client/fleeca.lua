@@ -1,3 +1,4 @@
+QBCore = exports['qb-core']:GetCoreObject()
 local closestBank = nil
 local inRange
 local requiredItemsShowed = false
