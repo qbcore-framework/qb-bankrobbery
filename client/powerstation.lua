@@ -15,6 +15,13 @@ local function CreateFire(coords, time)
     TriggerServerEvent("thermite:StopFires")
 end
 
+local function loadAnimDict(dict)
+    while not HasAnimDictLoaded(dict) do
+        RequestAnimDict(dict)
+        Wait(50)
+    end
+end
+
 -- Events
 
 RegisterNetEvent('police:SetCopCount', function(amount)
