@@ -69,13 +69,13 @@ local function CheckStationHits()
 end
 
 local function AllStationsHit()
-    local retval = true
+    local hit = 0
     for k, v in pairs(Config.PowerStations) do
-        if not Config.PowerStations[k].hit then
-            retval = false
+        if Config.PowerStations[k].hit then
+            hit += 1
         end
     end
-    return retval
+    return hit >= Config.HitsNeeded
 end
 
 local function IsNearPowerStation(coords, dist)
