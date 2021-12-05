@@ -78,6 +78,15 @@ local function AllStationsHit()
     return retval
 end
 
+local function IsNearPowerStation(coords, dist)
+    for k, v in pairs(Config.PowerStations) do
+        if #(coords - v.coords) < dist then
+            return true
+        end
+    end
+    return false
+end
+
 -- Events
 
 RegisterNetEvent('qb-bankrobbery:server:setBankState', function(bankId, state)
@@ -333,7 +342,7 @@ RegisterNetEvent('thermite:StartServerFire', function(coords, maxChildren, isGas
     local thermiteCoords = Config.BigBanks['pacific'].thermite[1].coords
     local thermite2Coords = Config.BigBanks['pacific'].thermite[2].coords
     local thermite3Coords = Config.BigBanks['paleto'].thermite[1].coords
-    if #(coords2 - thermiteCoords) < 10 or #(coords2 - thermite2Coords) < 10 or #(coords2 - thermite3Coords) < 10 then
+    if #(coords2 - thermiteCoords) < 10 or #(coords2 - thermite2Coords) < 10 or #(coords2 - thermite3Coords) < 10 or IsNearPowerStation(coords2, 10) then
         TriggerClientEvent("thermite:StartFire", -1, coords, maxChildren, isGasFire)
     end
 end)
