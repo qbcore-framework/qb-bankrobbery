@@ -7,6 +7,8 @@ Config.MinimumPacificPolice = 5
 Config.MinimumFleecaPolice = 3
 Config.MinimumThermitePolice = 2
 
+Config.HitsNeeded = 4 -- The amount of powerstation needed to be hit to cause a blackout
+
 Config.RewardTypes = {
     [1] = {
         type = "item"
