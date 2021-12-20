@@ -388,7 +388,7 @@ Config.SmallBanks = {
         ["object"] = `v_ilev_gb_vauldr`,
         ["heading"] = {
             closed = -270.542,
-            open = -170.542
+            open = -370.542
         },
         ["camId"] = 25,
         ["isOpened"] = false,
