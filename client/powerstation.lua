@@ -47,6 +47,31 @@ RegisterNetEvent('thermite:StopFires', function()
     end
 end)
 
+RegisterNetEvent('explosive:UseExplosive', function()
+    local ped = PlayerPedId()
+    local pos = GetEntityCoords(ped)
+    if currentExplosiveGate ~= 0 then
+        if math.random(1, 100) <= 85 and not IsWearingHandshoes() then
+            TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
+        end
+        if CurrentCops >= Config.MinimumThermitePolice then
+            currentGate = currentExplosiveGate
+            GiveWeaponToPed(ped, `weapon_stickybomb`, 1, false, true)
+            Wait(1000)
+            TaskPlantBomb(ped, pos.x, pos.y, pos.z, 218.5)
+            TriggerEvent('inventory:client:requiredItems', requiredItems, false)
+            Wait(2700)
+            SetNuiFocus(true, true)
+            SendNUIMessage({
+                action = "openThermite",
+                amount = math.random(5, 10),
+            })
+        else
+            QBCore.Functions.Notify('Minimum Of '..Config.MinimumThermitePolice..' Police Needed', "error")
+        end
+    end
+end)
+
 RegisterNetEvent('thermite:UseThermite', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
