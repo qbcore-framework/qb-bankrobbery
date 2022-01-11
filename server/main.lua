@@ -72,7 +72,7 @@ local function AllStationsHit()
     local hit = 0
     for k, v in pairs(Config.PowerStations) do
         if Config.PowerStations[k].hit then
-            hit += 1
+            hit = hit+1
         end
     end
     return hit >= Config.HitsNeeded
