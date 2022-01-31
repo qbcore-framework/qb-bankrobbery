@@ -299,22 +299,18 @@ end)
 
 RegisterNetEvent('qb-bankrobbery:server:callCops', function(type, bank, streetLabel, coords)
     local cameraId = 4
-    local bankLabel = "Fleeca"
     local msg = ""
     if type == "small" then
         cameraId = Config.SmallBanks[bank]["camId"]
-        bankLabel = "Fleeca"
-        msg = "The Alarm has been activated at "..bankLabel.. " " ..streetLabel.." (CAMERA ID: "..cameraId..")"
+        msg = Lang:t('info.alarm_at', {bank = Lang:t('banks.fleeca'), street = streetLabel, camid = cameraId})
     elseif type == "paleto" then
         cameraId = Config.BigBanks["paleto"]["camId"]
-        bankLabel = "Blaine County Savings"
-        msg = "The Alarm has been activated at "..bankLabel.. " Paleto Bay (CAMERA ID: "..cameraId..")"
+        msg = Lang:t('info.alarm_at', {bank = Lang:t('banks.blaine'), street = 'Paleto Bay', camid = cameraId})
     elseif type == "pacific" then
-        bankLabel = "Pacific Standard Bank"
-        msg = "The Alarm has been activated at "..bankLabel.. " Alta St (CAMERA ID: 1/2/3)"
+        msg = Lang:t('info.alarm_at', {bank = Lang:t('banks.pacific'), street = 'Alta St', camid = '1/2/3'})
     end
     local alertData = {
-        title = "Bank robbery",
+        title = Lang:t('info.rob_attempt'),
         coords = {x = coords.x, y = coords.y, z = coords.z},
         description = msg,
     }
@@ -378,7 +374,7 @@ QBCore.Functions.CreateUseableItem("thermite", function(source, item)
 	if Player.Functions.GetItemByName('lighter') ~= nil then
         TriggerClientEvent("thermite:UseThermite", source)
     else
-        TriggerClientEvent('QBCore:Notify', source, "You're missing ignition source ", "error")
+        TriggerClientEvent('QBCore:Notify', source, Lang:t('error.missing_ignition'), "error")
     end
 end)
 
