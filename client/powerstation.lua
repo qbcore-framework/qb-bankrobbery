@@ -68,10 +68,10 @@ RegisterNetEvent('thermite:UseThermite', function()
                     })
                     currentStation = closestStation
                 else
-                    QBCore.Functions.Notify("It seems that the fuses have blown.", "error")
+                    QBCore.Functions.Notify(Lang:t('error.fuse_blowen'), "error")
                 end
             else
-                QBCore.Functions.Notify('Minimum Of '..Config.MinimumThermitePolice..' Police Needed', "error")
+                QBCore.Functions.Notify(Lang:t('error.minimum_cops', {minCops = Config.MinimumThermitePolice}), "error")
             end
         end
     elseif currentThermiteGate ~= 0 then
@@ -89,7 +89,7 @@ RegisterNetEvent('thermite:UseThermite', function()
                 amount = math.random(5, 10),
             })
         else
-            QBCore.Functions.Notify('Minimum Of '..Config.MinimumThermitePolice..' Police Needed', "error")
+            QBCore.Functions.Notify(Lang:t('error.minimum_cops', {minCops = Config.MinimumThermitePolice}), "error")
         end
     end
 end)
@@ -123,17 +123,17 @@ RegisterNUICallback('thermitesuccess', function()
             local time = 3
             local coords = GetEntityCoords(PlayerPedId())
             while time > 0 do
-                QBCore.Functions.Notify("Thermite is going off in " .. time .. "..")
+                QBCore.Functions.Notify(Lang:t('info.thermite_count', {time = time}))
                 Wait(1000)
                 time = time - 1
             end
             local randTime = math.random(10000, 15000)
             CreateFire(coords, randTime)
             if currentStation ~= 0 then
-                QBCore.Functions.Notify("The fuses are broken", "success")
+                QBCore.Functions.Notify(Lang:t('success.fuse_broken'), "success")
                 TriggerServerEvent("qb-bankrobbery:server:SetStationStatus", currentStation, true)
             elseif currentGate ~= 0 then
-                QBCore.Functions.Notify("The door is open", "success")
+                QBCore.Functions.Notify(Lang:t('success.door_open'), "success")
                 TriggerServerEvent('qb-doorlock:server:updateState', currentGate, false)
                 currentGate = 0
             end
