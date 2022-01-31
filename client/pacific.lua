@@ -29,7 +29,7 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardB', function()
                 if CurrentCops >= Config.MinimumPacificPolice then
                     if not Config.BigBanks["pacific"]["isOpened"] then
                         TriggerEvent('inventory:client:requiredItems', requiredItems2, false)
-                        QBCore.Functions.Progressbar("security_pass", "Please validate ..", math.random(5000, 10000), false, true, {
+                        QBCore.Functions.Progressbar("security_pass", Lang:t('progress.using_card_pacific'), math.random(5000, 10000), false, true, {
                             disableMovement = true,
                             disableCarMovement = true,
                             disableMouse = false,
@@ -57,16 +57,16 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardB', function()
                             end
                         end, function() -- Cancel
                             StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                            QBCore.Functions.Notify("Canceled..", "error")
+                            QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
                         end)
                     else
-                        QBCore.Functions.Notify("Looks like the bank is already open ..", "error")
+                        QBCore.Functions.Notify(Lang:t('error.already_open'), "error")
                     end
                 else
-                    QBCore.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
+                    QBCore.Functions.Notify(Lang:t('error.minimum_cops', {minCops = Config.MinimumPacificPolice}), "error")
                 end
             else
-                QBCore.Functions.Notify("The security lock is active, opening the door is currently not possible.", "error", 5500)
+                QBCore.Functions.Notify(Lang:t('error.security_lock'), "error", 5500)
             end
         end)
     end
@@ -86,7 +86,7 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
                             QBCore.Functions.TriggerCallback('QBCore:HasItem', function(result)
                                 if result then
                                     TriggerEvent('inventory:client:requiredItems', requiredItems, false)
-                                    QBCore.Functions.Progressbar("hack_gate", "Connecting the hacking device ..", math.random(5000, 10000), false, true, {
+                                    QBCore.Functions.Progressbar("hack_gate", Lang:t('progress.connect_device'), math.random(5000, 10000), false, true, {
                                         disableMovement = true,
                                         disableCarMovement = true,
                                         disableMouse = false,
@@ -119,21 +119,21 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
                                         end
                                     end, function() -- Cancel
                                         StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                                        QBCore.Functions.Notify("Canceled", "error")
+                                        QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
                                     end)
                                 else
-                                    QBCore.Functions.Notify("You're missing an item ..", "error")
+                                    QBCore.Functions.Notify(Lang:t('error.missing_item'), "error")
                                 end
                             end, "trojan_usb")
                         else
-                            QBCore.Functions.Notify("Looks like the bank is already open", "error")
+                            QBCore.Functions.Notify(Lang:t('error.already_open'), "error")
                         end
                     else
-                        QBCore.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
+                        QBCore.Functions.Notify(Lang:t('error.minimum_cops', {minCops = Config.MinimumPacificPolice}), "error")
                     end
                 end
             else
-                QBCore.Functions.Notify("The security lock is active, opening the door is currently not possible.", "error", 5500)
+                QBCore.Functions.Notify(Lang:t('error.security_lock'), "error", 5500)
             end
         end)
     end
@@ -221,12 +221,12 @@ CreateThread(function()
                                 inRange = true
                                 DrawMarker(2, Config.BigBanks["pacific"]["lockers"][k]["coords"].x, Config.BigBanks["pacific"]["lockers"][k]["coords"].y, Config.BigBanks["pacific"]["lockers"][k]["coords"].z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.05, 255, 255, 255, 255, false, false, false, 1, false, false, false)
                                 if lockerDist < 0.5 then
-                                    DrawText3Ds(Config.BigBanks["pacific"]["lockers"][k]["coords"].x, Config.BigBanks["pacific"]["lockers"][k]["coords"].y, Config.BigBanks["pacific"]["lockers"][k]["coords"].z + 0.3, '[E] Break open the safe')
+                                    DrawText3Ds(Config.BigBanks["pacific"]["lockers"][k]["coords"].x, Config.BigBanks["pacific"]["lockers"][k]["coords"].y, Config.BigBanks["pacific"]["lockers"][k]["coords"].z + 0.3, '[E] ' .. Lang:t('text.break_safe'))
                                     if IsControlJustPressed(0, 38) then
                                         if CurrentCops >= Config.MinimumPacificPolice then
                                             openLocker("pacific", k)
                                         else
-                                            QBCore.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
+                                            QBCore.Functions.Notify(Lang:t('error.minimum_cops', {minCops = Config.MinimumPacificPolice}), "error")
                                         end
                                     end
                                 end
