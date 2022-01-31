@@ -8,7 +8,6 @@ local Translations = {
         security_lock = 'The security lock is active, opening the door is currently not possible.',
         fuse_blowen = 'It seems that the fuses have blown.',
         missing_ignition = 'You\'re missing ignition source',
-
     },
     success = {
         successful = 'Successful',
