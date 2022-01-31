@@ -39,12 +39,12 @@ CreateThread(function()
                                 if lockerDist < 5 then
                                     DrawMarker(2, Config.BigBanks["paleto"]["lockers"][k]["coords"].x, Config.BigBanks["paleto"]["lockers"][k]["coords"].y, Config.BigBanks["paleto"]["lockers"][k]["coords"].z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.05, 255, 255, 255, 255, false, false, false, 1, false, false, false)
                                     if lockerDist < 0.5 then
-                                        DrawText3Ds(Config.BigBanks["paleto"]["lockers"][k]["coords"].x, Config.BigBanks["paleto"]["lockers"][k]["coords"].y, Config.BigBanks["paleto"]["lockers"][k]["coords"].z + 0.3, '[E] Crack the vault')
+                                        DrawText3Ds(Config.BigBanks["paleto"]["lockers"][k]["coords"].x, Config.BigBanks["paleto"]["lockers"][k]["coords"].y, Config.BigBanks["paleto"]["lockers"][k]["coords"].z + 0.3, '[E] ' .. Lang:t('text.crack_vault'))
                                         if IsControlJustPressed(0, 38) then
                                             if CurrentCops >= Config.MinimumPaletoPolice then
                                                 openLocker("paleto", k)
                                             else
-                                                QBCore.Functions.Notify('Minimum Of '..Config.MinimumPaletoPolice..' Police Needed', "error")
+                                                QBCore.Functions.Notify(Lang:t('error.minimum_cops', {minCops = Config.MinimumPaletoPolice}), "error")
                                             end
                                         end
                                     end
@@ -94,7 +94,7 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
                 if CurrentCops >= Config.MinimumPaletoPolice then
                     if not Config.BigBanks["paleto"]["isOpened"] then
                         TriggerEvent('inventory:client:requiredItems', requiredItems, false)
-                        QBCore.Functions.Progressbar("security_pass", "Validitating card..", math.random(5000, 10000), false, true, {
+                        QBCore.Functions.Progressbar("security_pass", Lang:t('progress.using_card_paleto'), math.random(5000, 10000), false, true, {
                             disableMovement = true,
                             disableCarMovement = true,
                             disableMouse = false,
@@ -123,16 +123,16 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
                             end
                         end, function() -- Cancel
                             StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                            QBCore.Functions.Notify("Canceled..", "error")
+                            QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
                         end)
                     else
-                        QBCore.Functions.Notify("It looks like the bank is already opened..", "error")
+                        QBCore.Functions.Notify(Lang:t('error.already_open'), "error")
                     end
                 else
-                    QBCore.Functions.Notify('Minimum Of '..Config.MinimumPaletoPolice..' Police Needed', "error")
+                    QBCore.Functions.Notify(Lang:t('error.minimum_cops', {minCops = Config.MinimumPaletoPolice}), "error")
                 end
             else
-                QBCore.Functions.Notify("The security lock is active, the door cannot be opened at the moment..", "error", 5500)
+                QBCore.Functions.Notify(Lang:t('error.security_lock'), "error", 5500)
             end
         end)
     end
