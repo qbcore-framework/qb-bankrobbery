@@ -78,7 +78,7 @@ function DrawText3Ds(x, y, z, text) -- Globally used
 end
 
 local function OpenPaletoDoor()
-    TriggerServerEvent('qb-doorlock:server:updateState', 85, false)
+    TriggerServerEvent('qb-doorlock:server:updateState', 85, false, false, false, true, false, false)
     local object = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
     local timeOut = 10
     local entHeading = Config.BigBanks["paleto"]["heading"].closed
