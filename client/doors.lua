@@ -1,5 +1,5 @@
 RegisterNetEvent('qb-bankrobbery:client:ClearTimeoutDoors', function()
-    TriggerServerEvent('qb-doorlock:server:updateState', 85, true, false, false, true)
+    TriggerServerEvent('qb-doorlock:server:updateState', 4, true, false, false, true)
     local PaletoObject = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
     if PaletoObject ~= 0 then
         SetEntityHeading(PaletoObject, Config.BigBanks["paleto"]["heading"].closed)
@@ -36,14 +36,14 @@ CreateThread(function()
         if PaletoDist < 15 then
             inRange = true
             if Config.BigBanks["paleto"]["isOpened"] then
-                TriggerServerEvent('qb-doorlock:server:updateState', 85, false, false, false, true, false, false)
+                TriggerServerEvent('qb-doorlock:server:updateState', 4, false, false, false, true, false, false)
                 local object = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
 
                 if object ~= 0 then
                     SetEntityHeading(object, Config.BigBanks["paleto"]["heading"].open)
                 end
             else
-                TriggerServerEvent('qb-doorlock:server:updateState', 85, true, false, false, true, false, false)
+                TriggerServerEvent('qb-doorlock:server:updateState', 4, true, false, false, true, false, false)
                 local object = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
 
                 if object ~= 0 then
