@@ -107,7 +107,7 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
                             StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
                             TriggerServerEvent('qb-bankrobbery:server:setBankState', "paleto", true)
                             TriggerServerEvent("QBCore:Server:RemoveItem", "security_card_01", 1)
-                            TriggerServerEvent('qb-doorlock:server:updateState', 4, false)
+                            TriggerServerEvent('qb-doorlock:server:updateState', 4, false, false, false, true)
                             if not copsCalled then
 								local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
                                 local street1 = GetStreetNameFromHashKey(s1)

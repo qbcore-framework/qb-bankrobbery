@@ -10,8 +10,8 @@ local function OnHackPacificDone(success)
         TriggerEvent('mhacking:hide')
         TriggerServerEvent('qb-bankrobbery:server:setBankState', "pacific", true)
     else
-		TriggerEvent('mhacking:hide')
-	end
+        TriggerEvent('mhacking:hide')
+    end
 end
 
 -- Events
@@ -40,7 +40,7 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardB', function()
                             flags = 16,
                         }, {}, {}, function() -- Done
                             StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                            TriggerServerEvent('qb-doorlock:server:updateState', 1, false)
+                            TriggerServerEvent('qb-doorlock:server:updateState', 1, false, false, false, true)
                             TriggerServerEvent("QBCore:Server:RemoveItem", "security_card_02", 1)
                             if not copsCalled then
                                 local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)

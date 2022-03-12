@@ -134,7 +134,7 @@ RegisterNUICallback('thermitesuccess', function()
                 TriggerServerEvent("qb-bankrobbery:server:SetStationStatus", currentStation, true)
             elseif currentGate ~= 0 then
                 QBCore.Functions.Notify("The door is open", "success")
-                TriggerServerEvent('qb-doorlock:server:updateState', currentGate, false)
+                TriggerServerEvent('qb-doorlock:server:updateState', currentGate, false, false, false, true)
                 currentGate = 0
             end
         end
