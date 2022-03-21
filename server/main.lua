@@ -326,7 +326,7 @@ RegisterNetEvent('qb-bankrobbery:server:SetStationStatus', function(key, isHit)
     Config.PowerStations[key].hit = isHit
     TriggerClientEvent("qb-bankrobbery:client:SetStationStatus", -1, key, isHit)
     if AllStationsHit() then
-        TriggerEvent("qb-weathersync:server:toggleBlackout")
+        exports["qb-weathersync"]:setBlackout(true);
         TriggerClientEvent("police:client:DisableAllCameras", -1)
         TriggerClientEvent("qb-bankrobbery:client:disableAllBankSecurity", -1)
         blackoutActive = true
@@ -409,7 +409,7 @@ CreateThread(function()
     while true do
         Wait(1000 * 60 * 10)
         if blackoutActive then
-            TriggerEvent("qb-weathersync:server:toggleBlackout")
+            exports["qb-weathersync"]:setBlackout(false);
             TriggerClientEvent("police:client:EnableAllCameras", -1)
             TriggerClientEvent("qb-bankrobbery:client:enableAllBankSecurity", -1)
             blackoutActive = false
