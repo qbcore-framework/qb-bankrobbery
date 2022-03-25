@@ -241,7 +241,7 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
     if math.random(1, 100) <= 85 and not QBCore.Functions.IsWearingGloves() then
         TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
     end
-    if closestBank == 0 or not Config.UseTarget and not inElectronickitZone then return end
+    if closestBank == 0 or not inElectronickitZone then return end
     QBCore.Functions.TriggerCallback('qb-bankrobbery:server:isRobberyActive', function(isBusy)
         if not isBusy then
             if CurrentCops >= Config.MinimumFleecaPolice then
