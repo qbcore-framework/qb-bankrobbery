@@ -409,7 +409,7 @@ end)
 
 QBCore.Functions.CreateUseableItem("electronickit", function(source)
     local Player = QBCore.Functions.GetPlayer(source)
-    if not Player or Player.Functions.GetItemByName('electronickit') then return end
+    if not Player or not Player.Functions.GetItemByName('electronickit') then return end
     TriggerClientEvent("electronickit:UseElectronickit", source)
 end)
 
