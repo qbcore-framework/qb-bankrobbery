@@ -351,7 +351,7 @@ end)
 RegisterNetEvent('qb-bankrobbery:client:robberyCall', function(type, key, streetLabel, coords)
     if not isLoggedIn then return end
     local PlayerJob = QBCore.Functions.GetPlayerData().job
-    if PlayerJob.name == "police" and PlayerJob.onDuty then
+    if PlayerJob.name == "police" and PlayerJob.onduty then
         local cameraId = 4
         local bank = "Fleeca"
         if type == "small" then
