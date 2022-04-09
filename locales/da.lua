@@ -21,8 +21,7 @@ local Translations = {
     },
     text = {
         blip_name = '10-90: Bank Røveri',
-        break_safe = 'Bryd boksne op',
-        crack_vault = 'Bryd boksne op',
+        break_safe = '[E] Bryd boksne op',
     },
     progress = {
         breaking_safe = 'Åbner pengeskabet...',
@@ -35,9 +34,14 @@ local Translations = {
         blaine = 'Blaine County Savings',
         pacific = 'Pacific Standard Bank',
     }
+    target = {
+        break_safe = 'Bryd boksne op'
+    }
 }
 
-Lang = Locale:new({
-    phrases = Translations,
-    warnOnMissing = true
-})
+if GetConvar('qb_locale', 'en') == 'da' then
+    Lang = Locale:new({
+        phrases = Translations,
+        warnOnMissing = true
+    })    
+end
