@@ -33,7 +33,7 @@ local Translations = {
         fleeca = 'Fleeca',
         blaine = 'Blaine County Savings',
         pacific = 'Pacific Standard Bank',
-    }
+    },
     target = {
         break_safe = 'Break Safe Open'
     }
