@@ -1,11 +1,11 @@
 local Translations = {
     error = {
         canceled = 'Canceled',
-        too_strong = 'Looks like the safe lock is too strong ..',
+        too_strong = 'It looks like the safe lock is too strong ..',
         missing_item = 'You\'re missing an item ..',
-        already_open = 'Looks like the bank is already open ..',
+        already_open = 'It looks like the bank is already open ..',
         minimum_cops = 'Minimum Of %{minCops} Police Needed',
-        security_lock = 'The security lock is active, opening the door is currently not possible.',
+        security_lock = 'The security lock is active, the door cannot be opened at the moment.',
         fuse_blowen = 'It seems that the fuses have blown.',
         missing_ignition = 'You\'re missing ignition source',
     },
@@ -21,8 +21,7 @@ local Translations = {
     },
     text = {
         blip_name = '10-90: Bank Robbery',
-        break_safe = 'Break open the safe',
-        crack_vault = 'Crack the vault',
+        break_safe = '[E] Break open the safe',
     },
     progress = {
         breaking_safe = 'Breaking open the safe ..',
@@ -35,9 +34,14 @@ local Translations = {
         blaine = 'Blaine County Savings',
         pacific = 'Pacific Standard Bank',
     }
+    target = {
+        break_safe = 'Break Safe Open'
+    }
 }
 
-Lang = Locale:new({
-    phrases = Translations,
-    warnOnMissing = true
-})
+if GetConvar('qb_locale', 'en') == 'en' then
+    Lang = Locale:new({
+        phrases = Translations,
+        warnOnMissing = true
+    })    
+end
