@@ -15,7 +15,7 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
             if CurrentCops >= Config.MinimumPaletoPolice then
                 if not Config.BigBanks["paleto"]["isOpened"] then
                     TriggerEvent('inventory:client:requiredItems', requiredItems, false)
-                    QBCore.Functions.Progressbar("security_pass", "Validitating card..", math.random(5000, 10000), false, true, {
+                    QBCore.Functions.Progressbar("security_pass", Lang:t('progress.valid_card'), math.random(5000, 10000), false, true, {
                         disableMovement = true,
                         disableCarMovement = true,
                         disableMouse = false,
@@ -39,16 +39,16 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
                         copsCalled = true
                     end, function() -- Cancel
                         StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
-                        QBCore.Functions.Notify("Canceled..", "error")
+                        QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
                     end)
                 else
-                    QBCore.Functions.Notify("It looks like the bank is already opened..", "error")
+                    QBCore.Functions.Notify(Lang:t('error.already_opened'), "error")
                 end
             else
-                QBCore.Functions.Notify('Minimum Of '..Config.MinimumPaletoPolice..' Police Needed', "error")
+                QBCore.Functions.Notify(Lang:t('error.required_cops', {value = Config.MinimumPaletoPolice}), "error")
             end
         else
-            QBCore.Functions.Notify("The security lock is active, the door cannot be opened at the moment..", "error", 5500)
+            QBCore.Functions.Notify(Lang:t('error.security_locked'), "error", 5500)
         end
     end)
 end)
@@ -115,7 +115,7 @@ CreateThread(function()
                             return Config.BigBanks["paleto"]["isOpened"] and not Config.BigBanks["paleto"]["lockers"][k]["isBusy"] and not Config.BigBanks["paleto"]["lockers"][k]["isOpened"]
                         end,
                         icon = 'fa-solid fa-vault',
-                        label = 'Break Safe Open',
+                        label = Lang:t('info.break_safe'),
                     },
                 },
                 distance = 1.5
@@ -130,7 +130,7 @@ CreateThread(function()
             })
             lockerZone:onPlayerInOut(function(inside)
                 if inside and Config.BigBanks["paleto"]["isOpened"] and not Config.BigBanks["paleto"]["lockers"][k]["isBusy"] and not Config.BigBanks["paleto"]["lockers"][k]["isOpened"] then
-                    exports['qb-core']:DrawText('[E] Break open the safe', 'right')
+                    exports['qb-core']:DrawText('[E] '..Lang:t('info.break_safe'), 'right')
                     currentLocker = k
                 else
                     if currentLocker == k then
@@ -154,7 +154,7 @@ CreateThread(function()
                         if CurrentCops >= Config.MinimumPaletoPolice then
                             openLocker("paleto", currentLocker)
                         else
-                            QBCore.Functions.Notify('Minimum Of '..Config.MinimumPaletoPolice..' Police Needed', "error")
+                            QBCore.Functions.Notify(Lang:t('error.required_cops', {value = Config.MinimumPaletoPolice}), "error")
                         end
                         sleep = 1000
                     end

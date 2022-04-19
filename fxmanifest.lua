@@ -6,7 +6,11 @@ version '1.1.0'
 
 ui_page 'html/index.html'
 
-shared_script 'config.lua'
+shared_scripts {
+	'@qb-core/shared/locale.lua',
+	'locales/tc.lua',
+    'config.lua'
+}
 
 client_scripts {
     '@PolyZone/client.lua',

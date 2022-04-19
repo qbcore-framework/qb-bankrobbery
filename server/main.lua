@@ -284,22 +284,28 @@ end)
 
 RegisterNetEvent('qb-bankrobbery:server:callCops', function(type, bank, streetLabel, coords)
     local cameraId = 4
-    local bankLabel = "Fleeca"
+    local bankLabel = Lang:t('bank.small')
     local msg = ""
+    local zone = ''
+    local Area = {
+        ['paleto'] = Lang:t('area.paleto'),
+        ['pacific'] = Lang:t('area.pacific')
+    }
     if type == "small" then
         cameraId = Config.SmallBanks[bank]["camId"]
-        bankLabel = "Fleeca"
-        msg = "The Alarm has been activated at "..bankLabel.. " " ..streetLabel.." (CAMERA ID: "..cameraId..")"
+        --bankLabel = "Fleeca"
+        --msg = "The Alarm has been activated at "..bankLabel.. " " ..streetLabel.." (CAMERA ID: "..cameraId..")"
     elseif type == "paleto" then
         cameraId = Config.BigBanks["paleto"]["camId"]
-        bankLabel = "Blaine County Savings"
-        msg = "The Alarm has been activated at "..bankLabel.. " Paleto Bay (CAMERA ID: "..cameraId..")"
+        bankLabel = Lang:t('bank.paleto')
+        --msg = "The Alarm has been activated at "..bankLabel.. " Paleto Bay (CAMERA ID: "..cameraId..")"
     elseif type == "pacific" then
-        bankLabel = "Pacific Standard Bank"
-        msg = "The Alarm has been activated at "..bankLabel.. " Alta St (CAMERA ID: 1/2/3)"
+        bankLabel = Lang:t('bank.pacific')
+        --msg = "The Alarm has been activated at "..bankLabel.. " Alta St (CAMERA ID: 1/2/3)"
     end
+    msg = Lang:t('callCops.alarm_activated', {value = bankLabel, value2 = streetLabel or Area[type] or '', value4 = cameraId or '1/2/3'})
     local alertData = {
-        title = "Bank robbery",
+        title = Lang:t('info.title'),
         coords = {x = coords.x, y = coords.y, z = coords.z},
         description = msg,
     }
@@ -391,7 +397,7 @@ QBCore.Functions.CreateUseableItem("thermite", function(source)
 	if Player.Functions.GetItemByName('lighter') then
         TriggerClientEvent("thermite:UseThermite", source)
     else
-        TriggerClientEvent('QBCore:Notify', source, "You're missing ignition source", "error")
+        TriggerClientEvent('QBCore:Notify', source, Lang:t('error.missing_ignition'), "error")
     end
 end)
 
