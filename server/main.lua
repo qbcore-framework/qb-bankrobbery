@@ -131,7 +131,7 @@ RegisterNetEvent('qb-bankrobbery:server:recieveItem', function(type)
         local WeaponChance = math.random(1, 50)
         local odd1 = math.random(1, 50)
         local tierChance = math.random(1, 100)
-        local tier = 1
+        local tier
         if tierChance < 50 then tier = 1 elseif tierChance >= 50 and tierChance < 80 then tier = 2 elseif tierChance >= 80 and tierChance < 95 then tier = 3 else tier = 4 end
         if WeaponChance ~= odd1 then
             if tier ~= 4 then
@@ -160,7 +160,7 @@ RegisterNetEvent('qb-bankrobbery:server:recieveItem', function(type)
         local tierChance = math.random(1, 100)
         local WeaponChance = math.random(1, 10)
         local odd1 = math.random(1, 10)
-        local tier = 1
+        local tier
         if tierChance < 25 then tier = 1 elseif tierChance >= 25 and tierChance < 70 then tier = 2 elseif tierChance >= 70 and tierChance < 95 then tier = 3 else tier = 4 end
         if WeaponChance ~= odd1 then
             if tier ~= 4 then
@@ -190,12 +190,13 @@ RegisterNetEvent('qb-bankrobbery:server:recieveItem', function(type)
         local odd1 = math.random(1, 100)
         local odd2 = math.random(1, 100)
         local tierChance = math.random(1, 100)
-        local tier = 1
+        local tier
         if tierChance < 10 then tier = 1 elseif tierChance >= 25 and tierChance < 50 then tier = 2 elseif tierChance >= 50 and tierChance < 95 then tier = 3 else tier = 4 end
         if WeaponChance ~= odd1 or WeaponChance ~= odd2 then
             if tier ~= 4 then
                 if Config.RewardTypes[itemType].type == "item" then
                     local item = Config.LockerRewardsPacific["tier"..tier][math.random(#Config.LockerRewardsPacific["tier"..tier])]
+                    local maxAmount
                     if tier == 3 then maxAmount = 7 elseif tier == 2 then maxAmount = 18 else maxAmount = 25 end
                     local itemAmount = math.random(maxAmount)
                     ply.Functions.AddItem(item.item, itemAmount)
@@ -283,8 +284,8 @@ RegisterNetEvent('qb-bankrobbery:server:SetSmallbankTimeout', function(BankId)
 end)
 
 RegisterNetEvent('qb-bankrobbery:server:callCops', function(type, bank, streetLabel, coords)
-    local cameraId = 4
-    local bankLabel = "Fleeca"
+    local cameraId
+    local bankLabel
     local msg = ""
     if type == "small" then
         cameraId = Config.SmallBanks[bank]["camId"]
