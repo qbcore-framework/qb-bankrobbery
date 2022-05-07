@@ -1,6 +1,9 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 local inBankCardBZone = false
 local inElectronickitZone = false
 local currentLocker = 0
+local copsCalled = false
 
 -- Functions
 
@@ -76,7 +79,7 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
                 if not Config.BigBanks["pacific"]["isOpened"] then
                     QBCore.Functions.TriggerCallback('QBCore:HasItem', function(result)
                         if result then
-                            TriggerEvent('inventory:client:requiredItems', requiredItems, false)
+                            TriggerEvent('inventory:client:requiredItems', nil, false)
                             QBCore.Functions.Progressbar("hack_gate", "Connecting the hacking device ..", math.random(5000, 10000), false, true, {
                                 disableMovement = true,
                                 disableCarMovement = true,

@@ -1,3 +1,5 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 local closestStation = 0
 local currentStation = 0
 local currentFires = {}

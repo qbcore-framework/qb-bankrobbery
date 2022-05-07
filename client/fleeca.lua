@@ -1,4 +1,5 @@
-QBCore = exports['qb-core']:GetCoreObject()
+local QBCore = exports['qb-core']:GetCoreObject()
+
 isLoggedIn = LocalPlayer.state['isLoggedIn']
 currentThermiteGate = 0
 CurrentCops = 0
@@ -7,6 +8,7 @@ local inElectronickitZone = false
 local copsCalled = false
 local refreshed = false
 local currentLocker = 0
+local IsDrilling = false
 
 -- Handlers
 
@@ -352,8 +354,8 @@ RegisterNetEvent('qb-bankrobbery:client:robberyCall', function(type, key, street
     if not isLoggedIn then return end
     local PlayerJob = QBCore.Functions.GetPlayerData().job
     if PlayerJob.name == "police" and PlayerJob.onduty then
-        local cameraId = 4
-        local bank = "Fleeca"
+        local cameraId
+        local bank
         if type == "small" then
             cameraId = Config.SmallBanks[key]["camId"]
             bank = "Fleeca"

@@ -1,5 +1,8 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 local inBankCardAZone = false
 local currentLocker = 0
+local copsCalled = false
 
 -- Events
 
@@ -14,7 +17,7 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
         if not isBusy then
             if CurrentCops >= Config.MinimumPaletoPolice then
                 if not Config.BigBanks["paleto"]["isOpened"] then
-                    TriggerEvent('inventory:client:requiredItems', requiredItems, false)
+                    TriggerEvent('inventory:client:requiredItems', nil, false)
                     QBCore.Functions.Progressbar("security_pass", "Validitating card..", math.random(5000, 10000), false, true, {
                         disableMovement = true,
                         disableCarMovement = true,
