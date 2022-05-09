@@ -309,10 +309,6 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
     end)
 end)
 
-RegisterCommand('testfleeca', function()
-    OnHackDone(true)
-end, false)
-
 RegisterNetEvent('qb-bankrobbery:client:setBankState', function(bankId, state)
     if bankId == "paleto" then
         Config.BigBanks["paleto"]["isOpened"] = state
