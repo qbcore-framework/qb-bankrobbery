@@ -101,11 +101,12 @@ end)
 
 -- NUI Callbacks
 
-RegisterNUICallback('thermiteclick', function()
+RegisterNUICallback('thermiteclick', function(_, cb)
     PlaySound(-1, "CLICK_BACK", "WEB_NAVIGATION_SOUNDS_PHONE", 0, 0, 1)
+    cb('ok')
 end)
 
-RegisterNUICallback('thermitefailed', function()
+RegisterNUICallback('thermitefailed', function(_, cb)
     QBCore.Functions.TriggerCallback("thermite:server:check", function(success)
         if success then
             PlaySound(-1, "Place_Prop_Fail", "DLC_Dmod_Prop_Editor_Sounds", 0, 0, 1)
@@ -114,10 +115,11 @@ RegisterNUICallback('thermitefailed', function()
             local randTime = math.random(10000, 15000)
             CreateFire(coords, randTime)
         end
+        cb('ok')
     end)
 end)
 
-RegisterNUICallback('thermitesuccess', function()
+RegisterNUICallback('thermitesuccess', function(_, cb)
     QBCore.Functions.TriggerCallback("thermite:server:check", function(success)
         if success then
             ClearPedTasks(PlayerPedId())
@@ -139,11 +141,13 @@ RegisterNUICallback('thermitesuccess', function()
                 currentGate = 0
             end
         end
+        cb('ok')
     end)
 end)
 
-RegisterNUICallback('closethermite', function()
+RegisterNUICallback('closethermite', function(_, cb)
     SetNuiFocus(false, false)
+    cb('ok')
 end)
 
 -- Threads
