@@ -5,62 +5,116 @@ local blackoutActive = false
 
 -- Functions
 
+local function TableKeysToArray(tbl)
+    local array = {}
+    for k in pairs(tbl) do
+        array[#array+1] = k
+    end
+    return array
+end
+
 local function CheckStationHits()
-    if Config.PowerStations[1].hit and Config.PowerStations[2].hit and Config.PowerStations[3].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 19, false)
+    local policeHits = {}
+    local bankHits = {}
+
+    for k, v in pairs(Config.CameraHits) do
+        local allStationsHitPolice = false
+        local allStationsHitBank = false
+        if type(v.type) == 'table' then
+            for _, cameraType in pairs(v.type) do
+                if cameraType == 'police' then
+                    if type(v.stationsToHitPolice) == 'table' then
+                        local hits = 0
+                        for _, station in pairs(v.stationsToHitPolice) do
+                            if type(station) == 'table' then
+                                local hits2 = 0
+                                for _, station2 in pairs(station) do
+                                    if Config.PowerStations[station2].hit then hits2 += 1 end
+                                    if hits2 == #station then allStationsHitPolice = true end
+                                end
+                            else
+                                if Config.PowerStations[station].hit then hits += 1 end
+                                if hits == #v.stationsToHitPolice then allStationsHitPolice = true end
+                            end
+                        end
+                    else
+                        allStationsHitPolice = Config.PowerStations[v.stationsToHitPolice].hit
+                    end
+                elseif cameraType == 'bank' then
+                    if type(v.stationsToHitBank) == 'table' then
+                        local hits = 0
+                        for _, station in pairs(v.stationsToHitBank) do
+                            if type(station) == 'table' then
+                                local hits2 = 0
+                                for _, station2 in pairs(station) do
+                                    if Config.PowerStations[station2].hit then hits2 += 1 end
+                                    if hits2 == #station then allStationsHitBank = true end
+                                end
+                            else
+                                if Config.PowerStations[station].hit then hits += 1 end
+                                if hits == #v.stationsToHitBank then allStationsHitBank = true end
+                            end
+                        end
+                    else
+                        allStationsHitBank = Config.PowerStations[v.stationsToHitBank].hit
+                    end
+                end
+            end
+        else
+            if v.type == 'police' then
+                if type(v.stationsToHitPolice) == 'table' then
+                    local hits = 0
+                    for _, station in pairs(v.stationsToHitPolice) do
+                        if type(station) == 'table' then
+                            local hits2 = 0
+                            for _, station2 in pairs(station) do
+                                if Config.PowerStations[station2].hit then hits2 += 1 end
+                                if hits2 == #station then allStationsHitPolice = true end
+                            end
+                        else
+                            if Config.PowerStations[station].hit then hits += 1 end
+                            if hits == #v.stationsToHitPolice then allStationsHitPolice = true end
+                        end
+                    end
+                else
+                    allStationsHitPolice = Config.PowerStations[v.stationsToHitPolice].hit
+                end
+            elseif v.type == 'bank' then
+                if type(v.stationsToHitBank) == 'table' then
+                    local hits = 0
+                    for _, station in pairs(v.stationsToHitBank) do
+                        if type(station) == 'table' then
+                            local hits2 = 0
+                            for _, station2 in pairs(station) do
+                                if Config.PowerStations[station2].hit then hits2 += 1 end
+                                if hits2 == #station then allStationsHitBank = true end
+                            end
+                        else
+                            if Config.PowerStations[station].hit then hits += 1 end
+                            if hits == #v.stationsToHitBank then allStationsHitBank = true end
+                        end
+                    end
+                else
+                    allStationsHitBank = Config.PowerStations[v.stationsToHitBank].hit
+                end
+            end
+        end
+
+        if allStationsHitPolice then
+            policeHits[k] = true
+        end
+
+        if allStationsHitBank then
+            bankHits[k] = true
+        end
     end
-    if Config.PowerStations[3].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 18, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 7, false)
-    end
-    if Config.PowerStations[4].hit and Config.PowerStations[5].hit and Config.PowerStations[6].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 4, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 8, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 5, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 6, false)
-    end
-    if Config.PowerStations[1].hit and Config.PowerStations[2].hit and Config.PowerStations[3].hit and Config.PowerStations[4].hit and Config.PowerStations[5].hit and Config.PowerStations[6].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 1, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 2, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 3, false)
-    end
-    if Config.PowerStations[7].hit and Config.PowerStations[8].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 9, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 10, false)
-    end
-    if Config.PowerStations[9].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 11, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 12, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 13, false)
-    end
-    if Config.PowerStations[9].hit and Config.PowerStations[10].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 14, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 17, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 19, false)
-    end
-    if Config.PowerStations[7].hit and Config.PowerStations[9].hit and Config.PowerStations[10].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 15, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 16, false)
-    end
-    if Config.PowerStations[10].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 20, false)
-    end
-    if Config.PowerStations[11].hit and Config.PowerStations[1].hit and Config.PowerStations[2].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 21, false)
-        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 1, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 22, false)
-        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 2, false)
-    end
-    if Config.PowerStations[8].hit and Config.PowerStations[4].hit and Config.PowerStations[5].hit and Config.PowerStations[6].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 23, false)
-        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 3, false)
-    end
-    if Config.PowerStations[12].hit and Config.PowerStations[13].hit then
-        TriggerClientEvent("police:client:SetCamera", -1, 24, false)
-        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 4, false)
-        TriggerClientEvent("police:client:SetCamera", -1, 25, false)
-        TriggerClientEvent("qb-bankrobbery:client:BankSecurity", 5, false)
-    end
+
+    policeHits = TableKeysToArray(policeHits)
+    bankHits = TableKeysToArray(bankHits)
+
+    -- table.type checks if it's empty as well, if it's empty it will return the type 'empty' instead of 'array'
+    if table.type(policeHits) == 'array' then TriggerClientEvent("police:client:SetCamera", -1, policeHits, false) end
+    if table.type(bankHits) == 'array' then TriggerClientEvent("qb-bankrobbery:client:BankSecurity", -1, bankHits, false) end
 end
 
 local function AllStationsHit()
@@ -84,29 +138,22 @@ end
 
 -- Events
 
-RegisterNetEvent('qb-bankrobbery:server:setBankState', function(bankId, state)
+RegisterNetEvent('qb-bankrobbery:server:setBankState', function(bankId)
+    if robberyBusy then return end
+    TriggerClientEvent('qb-bankrobbery:client:setBankState', -1, bankId, true)
     if bankId == "paleto" then
-        if not robberyBusy then
-            Config.BigBanks["paleto"]["isOpened"] = state
-            TriggerClientEvent('qb-bankrobbery:client:setBankState', -1, bankId, state)
-            TriggerEvent('qb-scoreboard:server:SetActivityBusy', "paleto", true)
-            TriggerEvent('qb-bankrobbery:server:setTimeout')
-        end
+        Config.BigBanks["paleto"]["isOpened"] = true
+        TriggerEvent('qb-scoreboard:server:SetActivityBusy', "paleto", true)
+        TriggerEvent('qb-bankrobbery:server:setTimeout')
     elseif bankId == "pacific" then
-        if not robberyBusy then
-            Config.BigBanks["pacific"]["isOpened"] = state
-            TriggerClientEvent('qb-bankrobbery:client:setBankState', -1, bankId, state)
-            TriggerEvent('qb-scoreboard:server:SetActivityBusy', "pacific", true)
-            TriggerEvent('qb-bankrobbery:server:setTimeout')
-        end
+        Config.BigBanks["pacific"]["isOpened"] = true
+        TriggerEvent('qb-scoreboard:server:SetActivityBusy', "pacific", true)
+        TriggerEvent('qb-bankrobbery:server:setTimeout')
     else
-        if not robberyBusy then
-            Config.SmallBanks[bankId]["isOpened"] = state
-            TriggerClientEvent('qb-bankrobbery:client:setBankState', -1, bankId, state)
-            TriggerEvent('qb-banking:server:SetBankClosed', bankId, true)
-            TriggerEvent('qb-scoreboard:server:SetActivityBusy', "bankrobbery", true)
-            TriggerEvent('qb-bankrobbery:server:SetSmallbankTimeout', bankId)
-        end
+        Config.SmallBanks[bankId]["isOpened"] = true
+        TriggerEvent('qb-banking:server:SetBankClosed', bankId, true)
+        TriggerEvent('qb-scoreboard:server:SetActivityBusy', "bankrobbery", true)
+        TriggerEvent('qb-bankrobbery:server:SetSmallbankTimeout', bankId)
     end
     robberyBusy = true
 end)
@@ -235,30 +282,27 @@ RegisterNetEvent('qb-bankrobbery:server:recieveItem', function(type)
 end)
 
 RegisterNetEvent('qb-bankrobbery:server:setTimeout', function()
-    if not robberyBusy then
-        if not timeOut then
-            timeOut = true
-            CreateThread(function()
-                SetTimeout(60000 * 90, function()
-                    timeOut = false
-                    robberyBusy = false
-                    TriggerEvent('qb-scoreboard:server:SetActivityBusy', "bankrobbery", false)
-                    TriggerEvent('qb-scoreboard:server:SetActivityBusy', "pacific", false)
-                    for k in pairs(Config.BigBanks["pacific"]["lockers"]) do
-                        Config.BigBanks["pacific"]["lockers"][k]["isBusy"] = false
-                        Config.BigBanks["pacific"]["lockers"][k]["isOpened"] = false
-                    end
-                    for k in pairs(Config.BigBanks["paleto"]["lockers"]) do
-                        Config.BigBanks["paleto"]["lockers"][k]["isBusy"] = false
-                        Config.BigBanks["paleto"]["lockers"][k]["isOpened"] = false
-                    end
-                    TriggerClientEvent('qb-bankrobbery:client:ClearTimeoutDoors', -1)
-                    Config.BigBanks["paleto"]["isOpened"] = false
-                    Config.BigBanks["pacific"]["isOpened"] = false
-                end)
-            end)
-        end
-    end
+    if source or source ~= '' or robberyBusy or timeOut then return end -- This event can only be triggered server side so we have to make sure that is checked
+    timeOut = true
+    CreateThread(function()
+        SetTimeout(60000 * 90, function()
+            timeOut = false
+            robberyBusy = false
+            TriggerEvent('qb-scoreboard:server:SetActivityBusy', "bankrobbery", false)
+            TriggerEvent('qb-scoreboard:server:SetActivityBusy', "pacific", false)
+            for k in pairs(Config.BigBanks["pacific"]["lockers"]) do
+                Config.BigBanks["pacific"]["lockers"][k]["isBusy"] = false
+                Config.BigBanks["pacific"]["lockers"][k]["isOpened"] = false
+            end
+            for k in pairs(Config.BigBanks["paleto"]["lockers"]) do
+                Config.BigBanks["paleto"]["lockers"][k]["isBusy"] = false
+                Config.BigBanks["paleto"]["lockers"][k]["isOpened"] = false
+            end
+            TriggerClientEvent('qb-bankrobbery:client:ClearTimeoutDoors', -1)
+            Config.BigBanks["paleto"]["isOpened"] = false
+            Config.BigBanks["pacific"]["isOpened"] = false
+        end)
+    end)
 end)
 
 RegisterNetEvent('qb-bankrobbery:server:SetSmallbankTimeout', function(BankId)
