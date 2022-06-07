@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 
 description 'Bankrobbery for QB-Core'
-version '1.1.0'
+version '1.1.1'
 
 ui_page 'html/index.html'
 
@@ -27,3 +27,4 @@ files {
 dependency 'PolyZone'
 
 lua54 'yes'
+use_fxv2_oal 'yes'
