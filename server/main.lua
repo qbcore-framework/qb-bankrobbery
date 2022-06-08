@@ -1,7 +1,6 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local robberyBusy = false
 local timeOut = false
-local blackoutActive = false
 
 -- Functions
 
@@ -140,40 +139,56 @@ end
 
 RegisterNetEvent('qb-bankrobbery:server:setBankState', function(bankId)
     if robberyBusy then return end
-    TriggerClientEvent('qb-bankrobbery:client:setBankState', -1, bankId, true)
     if bankId == "paleto" then
+        if Config.BigBanks["paleto"]["isOpened"] or #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks["paleto"]["coords"]) < 2.5 then
+            return error("qb-bankrobbery:server:setBankState (paleto) was triggered when the bank was already open or when the player was outside of range, source: "..source)
+        end
         Config.BigBanks["paleto"]["isOpened"] = true
+        TriggerEvent('qb-bankrobbery:server:setTimeout')
         TriggerEvent('qb-scoreboard:server:SetActivityBusy', "paleto", true)
-        TriggerEvent('qb-bankrobbery:server:setTimeout')
     elseif bankId == "pacific" then
+        if Config.BigBanks["pacific"]["isOpened"] or #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks["pacific"]["coords"][1]) < 2.5 then
+            return error("qb-bankrobbery:server:setBankState (pacific) was triggered when the bank was already open or when the player was outside of range, source: "..source)
+        end
         Config.BigBanks["pacific"]["isOpened"] = true
-        TriggerEvent('qb-scoreboard:server:SetActivityBusy', "pacific", true)
         TriggerEvent('qb-bankrobbery:server:setTimeout')
+        TriggerEvent('qb-scoreboard:server:SetActivityBusy', "pacific", true)
     else
+        if Config.SmallBanks[bankId]["isOpened"] or #(GetEntityCoords(GetPlayerPed(source)) - Config.SmallBanks[bankId]["coords"]) < 2.5 then
+            return error("qb-bankrobbery:server:setBankState (smallbank number "..bankId..") was triggered when the bank was already open or when the player was outside of range, source: "..source)
+        end
         Config.SmallBanks[bankId]["isOpened"] = true
         TriggerEvent('qb-banking:server:SetBankClosed', bankId, true)
+        TriggerEvent('qb-bankrobbery:server:SetSmallBankTimeout', bankId)
         TriggerEvent('qb-scoreboard:server:SetActivityBusy', "bankrobbery", true)
-        TriggerEvent('qb-bankrobbery:server:SetSmallbankTimeout', bankId)
     end
+    TriggerClientEvent('qb-bankrobbery:client:setBankState', -1, bankId)
     robberyBusy = true
 end)
 
 RegisterNetEvent('qb-bankrobbery:server:setLockerState', function(bankId, lockerId, state, bool)
-    if bankId == "paleto" then
-        Config.BigBanks["paleto"]["lockers"][lockerId][state] = bool
-    elseif bankId == "pacific" then
-        Config.BigBanks["pacific"]["lockers"][lockerId][state] = bool
+    if bankId == "paleto" or bankId == "pacific" then
+        if #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks[bankId]["lockers"][lockerId]["coords"]) < 2.5 then
+            return error("qb-bankrobbery:server:setLockerState ("..bankId..") was triggered when the player was outside of range, source: "..source)
+        end
+        Config.BigBanks[bankId]["lockers"][lockerId][state] = bool
     else
+        if #(GetEntityCoords(GetPlayerPed(source)) - Config.SmallBanks[bankId]["lockers"][lockerId]["coords"]) < 2.5 then
+            return error("qb-bankrobbery:server:setLockerState (smallbank number "..bankId..") was triggered when the player was outside of range, source: "..source)
+        end
         Config.SmallBanks[bankId]["lockers"][lockerId][state] = bool
     end
     TriggerClientEvent('qb-bankrobbery:client:setLockerState', -1, bankId, lockerId, state, bool)
 end)
 
-RegisterNetEvent('qb-bankrobbery:server:recieveItem', function(type)
+RegisterNetEvent('qb-bankrobbery:server:recieveItem', function(type, bankId, lockerId)
     local src = source
     local ply = QBCore.Functions.GetPlayer(src)
     if not ply then return end
     if type == "small" then
+        if #(GetEntityCoords(GetPlayerPed(src)) - Config.SmallBanks[bankId]["lockers"][lockerId]["coords"]) < 2.5 then
+            return error("qb-bankrobbery:server:receiveItem (smallbank number "..bankId..") was triggered when the player was outside of range, source: "..src)
+        end
         local itemType = math.random(#Config.RewardTypes)
         local WeaponChance = math.random(1, 50)
         local odd1 = math.random(1, 50)
@@ -203,6 +218,9 @@ RegisterNetEvent('qb-bankrobbery:server:recieveItem', function(type)
             TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['weapon_stungun'], "add")
         end
     elseif type == "paleto" then
+        if #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks["paleto"]["lockers"][lockerId]["coords"]) < 2.5 then
+            return error("qb-bankrobbery:server:receiveItem (paleto) was triggered when the player was outside of range, source: "..source)
+        end
         local itemType = math.random(#Config.RewardTypes)
         local tierChance = math.random(1, 100)
         local WeaponChance = math.random(1, 10)
@@ -232,6 +250,9 @@ RegisterNetEvent('qb-bankrobbery:server:recieveItem', function(type)
             TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['weapon_vintagepistol'], "add")
         end
     elseif type == "pacific" then
+        if #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks["pacific"]["lockers"][lockerId]["coords"]) < 2.5 then
+            return error("qb-bankrobbery:server:receiveItem (pacific) was triggered when the player was outside of range, source: "..source)
+        end
         local itemType = math.random(#Config.RewardTypes)
         local WeaponChance = math.random(1, 100)
         local odd1 = math.random(1, 100)
@@ -281,13 +302,11 @@ RegisterNetEvent('qb-bankrobbery:server:recieveItem', function(type)
     end
 end)
 
-RegisterNetEvent('qb-bankrobbery:server:setTimeout', function()
-    if source or source ~= '' or robberyBusy or timeOut then return end -- This event can only be triggered server side so we have to make sure that is checked
+AddEventHandler('qb-bankrobbery:server:setTimeout', function()
+    if robberyBusy or timeOut then return end
     timeOut = true
     CreateThread(function()
         SetTimeout(60000 * 90, function()
-            timeOut = false
-            robberyBusy = false
             TriggerEvent('qb-scoreboard:server:SetActivityBusy', "bankrobbery", false)
             TriggerEvent('qb-scoreboard:server:SetActivityBusy', "pacific", false)
             for k in pairs(Config.BigBanks["pacific"]["lockers"]) do
@@ -301,30 +320,27 @@ RegisterNetEvent('qb-bankrobbery:server:setTimeout', function()
             TriggerClientEvent('qb-bankrobbery:client:ClearTimeoutDoors', -1)
             Config.BigBanks["paleto"]["isOpened"] = false
             Config.BigBanks["pacific"]["isOpened"] = false
+            timeOut = false
+            robberyBusy = false
         end)
     end)
 end)
 
-RegisterNetEvent('qb-bankrobbery:server:SetSmallbankTimeout', function(BankId)
-    if not robberyBusy then
-        if not timeOut then
-            timeOut = true
-            CreateThread(function()
-                SetTimeout(60000 * 30, function()
-                    timeOut = false
-                    robberyBusy = false
-                    for k in pairs(Config.SmallBanks[BankId]["lockers"]) do
-                        Config.SmallBanks[BankId]["lockers"][k]["isOpened"] = false
-                        Config.SmallBanks[BankId]["lockers"][k]["isBusy"] = false
-                    end
-                    timeOut = false
-                    robberyBusy = false
-                    TriggerClientEvent('qb-bankrobbery:client:ResetFleecaLockers', -1, BankId)
-                    TriggerEvent('qb-banking:server:SetBankClosed', BankId, false)
-                end)
-            end)
-		end
-    end
+AddEventHandler('qb-bankrobbery:server:SetSmallBankTimeout', function(BankId)
+    if robberyBusy or timeOut then return end
+    timeOut = true
+    CreateThread(function()
+        SetTimeout(60000 * 30, function()
+            for k in pairs(Config.SmallBanks[BankId]["lockers"]) do
+                Config.SmallBanks[BankId]["lockers"][k]["isOpened"] = false
+                Config.SmallBanks[BankId]["lockers"][k]["isBusy"] = false
+            end
+            TriggerClientEvent('qb-bankrobbery:client:ResetFleecaLockers', -1, BankId)
+            TriggerEvent('qb-banking:server:SetBankClosed', BankId, false)
+            timeOut = false
+            robberyBusy = false
+        end)
+    end)
 end)
 
 RegisterNetEvent('qb-bankrobbery:server:callCops', function(type, bank, streetLabel, coords)
@@ -332,19 +348,28 @@ RegisterNetEvent('qb-bankrobbery:server:callCops', function(type, bank, streetLa
     local bankLabel
     local msg = ""
     if type == "small" then
+        if not Config.SmallBanks[bank]["alarm"] then
+            return error("qb-bankrobbery:server:callCops (smallbank number "..bank..") was triggered when the alarm wasn't triggered, source: "..source)
+        end
         cameraId = Config.SmallBanks[bank]["camId"]
         bankLabel = "Fleeca"
         msg = "The Alarm has been activated at "..bankLabel.. " " ..streetLabel.." (CAMERA ID: "..cameraId..")"
     elseif type == "paleto" then
+        if not Config.BigBanks["paleto"]["alarm"] then
+            return error("qb-bankrobbery:server:callCops (paleto) was triggered when the alarm wasn't triggered, source: "..source)
+        end
         cameraId = Config.BigBanks["paleto"]["camId"]
         bankLabel = "Blaine County Savings"
         msg = "The Alarm has been activated at "..bankLabel.. " Paleto Bay (CAMERA ID: "..cameraId..")"
     elseif type == "pacific" then
+        if not Config.BigBanks["pacific"]["alarm"] then
+            return error("qb-bankrobbery:server:callCops (pacific) was triggered when the alarm wasn't triggered, source: "..source)
+        end
         bankLabel = "Pacific Standard Bank"
         msg = "The Alarm has been activated at "..bankLabel.. " Alta St (CAMERA ID: 1/2/3)"
     end
     local alertData = {
-        title = "Bank robbery",
+        title = "Bank Robbery",
         coords = {x = coords.x, y = coords.y, z = coords.z},
         description = msg,
     }
@@ -359,13 +384,11 @@ RegisterNetEvent('qb-bankrobbery:server:SetStationStatus', function(key, isHit)
         exports["qb-weathersync"]:setBlackout(true)
         TriggerClientEvent("police:client:DisableAllCameras", -1)
         TriggerClientEvent("qb-bankrobbery:client:disableAllBankSecurity", -1)
-        blackoutActive = true
         CreateThread(function()
             SetTimeout(60000 * Config.BlackoutTimer, function()
                 exports["qb-weathersync"]:setBlackout(false)
                 TriggerClientEvent("police:client:EnableAllCameras", -1)
                 TriggerClientEvent("qb-bankrobbery:client:enableAllBankSecurity", -1)
-                blackoutActive = false
             end)
         end)
     else
@@ -456,16 +479,4 @@ QBCore.Functions.CreateUseableItem("electronickit", function(source)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player or not Player.Functions.GetItemByName('electronickit') then return end
     TriggerClientEvent("electronickit:UseElectronickit", source)
-end)
-
--- Threads
-
-CreateThread(function()
-    while true do
-        if not blackoutActive then
-            TriggerClientEvent("qb-bankrobbery:client:enableAllBankSecurity", -1)
-            TriggerClientEvent("police:client:EnableAllCameras", -1)
-        end
-        Wait(60000 * 30)
-    end
 end)
