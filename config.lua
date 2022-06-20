@@ -58,6 +58,114 @@ Config.LockerRewardsPacific = {
     },
 }
 
+Config.CameraHits = {
+    [1] = {
+        type = {"police", "bank"},
+        stationsToHitPolice = {1, 2, 3, 4, 5, 6},
+        stationsToHitBank = {1, 2, 11}
+    },
+    [2] = {
+        type = {"police", "bank"},
+        stationsToHitPolice = {1, 2, 3, 4, 5, 6},
+        stationsToHitBank = {1, 2, 11}
+    },
+    [3] = {
+        type = {"police", "bank"},
+        stationsToHitPolice = {1, 2, 3, 4, 5, 6},
+        stationsToHitBank = {4, 5, 6, 8}
+    },
+    [4] = {
+        type = {"police", "bank"},
+        stationsToHitPolice = {4, 5, 6},
+        stationsToHitBank = {12, 13}
+    },
+    [5] = {
+        type = {"police", "bank"},
+        stationsToHitPolice = {4, 5, 6},
+        stationsToHitBank = {12, 13}
+    },
+    [6] = {
+        type = "police",
+        stationsToHitPolice = {4, 5, 6}
+    },
+    [7] = {
+        type = "police",
+        stationsToHitPolice = 3
+    },
+    [8] = {
+        type = "police",
+        stationsToHitPolice = {4, 5, 6}
+    },
+    [9] = {
+        type = "police",
+        stationsToHitPolice = {7, 8}
+    },
+    [10] = {
+        type = "police",
+        stationsToHitPolice = {7, 8}
+    },
+    [11] = {
+        type = "police",
+        stationsToHitPolice = 9
+    },
+    [12] = {
+        type = "police",
+        stationsToHitPolice = 9
+    },
+    [13] = {
+        type = "police",
+        stationsToHitPolice = 9
+    },
+    [14] = {
+        type = "police",
+        stationsToHitPolice = {9, 10}
+    },
+    [15] = {
+        type = "police",
+        stationsToHitPolice = {7, 9, 10}
+    },
+    [16] = {
+        type = "police",
+        stationsToHitPolice = {7, 9, 10}
+    },
+    [17] = {
+        type = "police",
+        stationsToHitPolice = {9, 10}
+    },
+    [18] = {
+        type = "police",
+        stationsToHitPolice = 3
+    },
+    [19] = {
+        type = "police",
+        stationsToHitPolice = {{1, 2, 3}, {9, 10}}
+    },
+    [20] = {
+        type = "police",
+        stationsToHitPolice = 10
+    },
+    [21] = {
+        type = "police",
+        stationsToHitPolice = {1, 2, 11}
+    },
+    [22] = {
+        type = "police",
+        stationsToHitPolice = {1, 2, 11}
+    },
+    [23] = {
+        type = "police",
+        stationsToHitPolice = {4, 5, 6, 8}
+    },
+    [24] = {
+        type = "police",
+        stationsToHitPolice = {12, 13}
+    },
+    [25] = {
+        type = "police",
+        stationsToHitPolice = {12, 13}
+    }
+}
+
 Config.PowerStations = {
     [1] = {
         coords = vector3(2835.24, 1505.68, 24.72),

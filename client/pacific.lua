@@ -10,7 +10,7 @@ local copsCalled = false
 local function OnHackPacificDone(success)
     if success then
         TriggerEvent('mhacking:hide')
-        TriggerServerEvent('qb-bankrobbery:server:setBankState', "pacific", true)
+        TriggerServerEvent('qb-bankrobbery:server:setBankState', "pacific")
     else
 		TriggerEvent('mhacking:hide')
 	end

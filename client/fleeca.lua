@@ -85,7 +85,7 @@ end
 local function OnHackDone(success)
     if success then
         TriggerEvent('mhacking:hide')
-        TriggerServerEvent('qb-bankrobbery:server:setBankState', closestBank, true)
+        TriggerServerEvent('qb-bankrobbery:server:setBankState', closestBank)
     else
 		TriggerEvent('mhacking:hide')
 	end
@@ -138,7 +138,7 @@ function openLocker(bankId, lockerId) -- Globally Used
                     DeleteObject(DrillObject)
                     TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isOpened', true)
                     TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
-                    TriggerServerEvent('qb-bankrobbery:server:recieveItem', 'paleto')
+                    TriggerServerEvent('qb-bankrobbery:server:recieveItem', 'paleto', bankId, lockerId)
                     QBCore.Functions.Notify("Successful!", "success")
                     SetTimeout(500, function()
                         IsDrilling = false
@@ -184,7 +184,7 @@ function openLocker(bankId, lockerId) -- Globally Used
 
                     TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isOpened', true)
                     TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
-                    TriggerServerEvent('qb-bankrobbery:server:recieveItem', 'pacific')
+                    TriggerServerEvent('qb-bankrobbery:server:recieveItem', 'pacific', bankId, lockerId)
                     QBCore.Functions.Notify("Successful!", "success")
                     SetTimeout(500, function()
                         IsDrilling = false
@@ -225,7 +225,7 @@ function openLocker(bankId, lockerId) -- Globally Used
             StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
             TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isOpened', true)
             TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
-            TriggerServerEvent('qb-bankrobbery:server:recieveItem', 'small')
+            TriggerServerEvent('qb-bankrobbery:server:recieveItem', 'small', bankId, lockerId)
             QBCore.Functions.Notify("Successful!", "success")
             SetTimeout(500, function()
                 IsDrilling = false
@@ -309,22 +309,16 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
     end)
 end)
 
-RegisterNetEvent('qb-bankrobbery:client:setBankState', function(bankId, state)
+RegisterNetEvent('qb-bankrobbery:client:setBankState', function(bankId)
     if bankId == "paleto" then
-        Config.BigBanks["paleto"]["isOpened"] = state
-        if state then
-            OpenPaletoDoor()
-        end
+        Config.BigBanks["paleto"]["isOpened"] = true
+        OpenPaletoDoor()
     elseif bankId == "pacific" then
-        Config.BigBanks["pacific"]["isOpened"] = state
-        if state then
-            OpenPacificDoor()
-        end
+        Config.BigBanks["pacific"]["isOpened"] = true
+        OpenPacificDoor()
     else
-        Config.SmallBanks[bankId]["isOpened"] = state
-        if state then
-            OpenBankDoor(bankId)
-        end
+        Config.SmallBanks[bankId]["isOpened"] = true
+        OpenBankDoor(bankId)
     end
 end)
 

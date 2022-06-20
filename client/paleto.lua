@@ -29,7 +29,7 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
                         flags = 16,
                     }, {}, {}, function() -- Done
                         StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
-                        TriggerServerEvent('qb-bankrobbery:server:setBankState', "paleto", true)
+                        TriggerServerEvent('qb-bankrobbery:server:setBankState', 'paleto')
                         TriggerServerEvent('qb-bankrobbery:server:removeBankCard', '01')
                         TriggerServerEvent('qb-doorlock:server:updateState', 4, false, false, false, true, false, false)
                         if copsCalled or not Config.BigBanks["paleto"]["alarm"] then return end
