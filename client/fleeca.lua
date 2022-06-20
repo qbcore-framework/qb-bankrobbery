@@ -341,7 +341,15 @@ RegisterNetEvent('qb-bankrobbery:client:disableAllBankSecurity', function()
 end)
 
 RegisterNetEvent('qb-bankrobbery:client:BankSecurity', function(key, status)
-    Config.SmallBanks[key]["alarm"] = status
+    if type(key) == 'table' and table.type(key) == 'array' then
+        for _, v in pairs(key) do
+            Config.SmallBanks[v]["alarm"] = status
+        end
+    elseif type(key) == 'number' then
+        Config.SmallBanks[key]["alarm"] = status
+    else
+        error('qb-bankrobbery:client:BankSecurity did not receive the right type of key\nreceived type: ' .. type(key) .. '\nreceived value: ' .. key)
+    end
 end)
 
 RegisterNetEvent('qb-bankrobbery:client:setLockerState', function(bankId, lockerId, state, bool)
