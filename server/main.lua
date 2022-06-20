@@ -12,6 +12,23 @@ local function TableKeysToArray(tbl)
     return array
 end
 
+local function TableLoopStations(toLoop)
+    local hits = 0
+    for _, station in pairs(toLoop) do
+        if type(station) == 'table' then
+            local hits2 = 0
+            for _, station2 in pairs(station) do
+                if Config.PowerStations[station2].hit then hits2 += 1 end
+                if hits2 == #station then return true end
+            end
+        else
+            if Config.PowerStations[station].hit then hits += 1 end
+            if hits == #toLoop then return true end
+        end
+    end
+    return false
+end
+
 local function CheckStationHits()
     local policeHits = {}
     local bankHits = {}
@@ -23,37 +40,13 @@ local function CheckStationHits()
             for _, cameraType in pairs(v.type) do
                 if cameraType == 'police' then
                     if type(v.stationsToHitPolice) == 'table' then
-                        local hits = 0
-                        for _, station in pairs(v.stationsToHitPolice) do
-                            if type(station) == 'table' then
-                                local hits2 = 0
-                                for _, station2 in pairs(station) do
-                                    if Config.PowerStations[station2].hit then hits2 += 1 end
-                                    if hits2 == #station then allStationsHitPolice = true end
-                                end
-                            else
-                                if Config.PowerStations[station].hit then hits += 1 end
-                                if hits == #v.stationsToHitPolice then allStationsHitPolice = true end
-                            end
-                        end
+                        allStationsHitPolice = TableLoopStations(v.stationsToHitPolice)
                     else
                         allStationsHitPolice = Config.PowerStations[v.stationsToHitPolice].hit
                     end
                 elseif cameraType == 'bank' then
                     if type(v.stationsToHitBank) == 'table' then
-                        local hits = 0
-                        for _, station in pairs(v.stationsToHitBank) do
-                            if type(station) == 'table' then
-                                local hits2 = 0
-                                for _, station2 in pairs(station) do
-                                    if Config.PowerStations[station2].hit then hits2 += 1 end
-                                    if hits2 == #station then allStationsHitBank = true end
-                                end
-                            else
-                                if Config.PowerStations[station].hit then hits += 1 end
-                                if hits == #v.stationsToHitBank then allStationsHitBank = true end
-                            end
-                        end
+                        allStationsHitBank = TableLoopStations(v.stationsToHitBank)
                     else
                         allStationsHitBank = Config.PowerStations[v.stationsToHitBank].hit
                     end
@@ -62,37 +55,13 @@ local function CheckStationHits()
         else
             if v.type == 'police' then
                 if type(v.stationsToHitPolice) == 'table' then
-                    local hits = 0
-                    for _, station in pairs(v.stationsToHitPolice) do
-                        if type(station) == 'table' then
-                            local hits2 = 0
-                            for _, station2 in pairs(station) do
-                                if Config.PowerStations[station2].hit then hits2 += 1 end
-                                if hits2 == #station then allStationsHitPolice = true end
-                            end
-                        else
-                            if Config.PowerStations[station].hit then hits += 1 end
-                            if hits == #v.stationsToHitPolice then allStationsHitPolice = true end
-                        end
-                    end
+                    allStationsHitPolice = TableLoopStations(v.stationsToHitPolice)
                 else
                     allStationsHitPolice = Config.PowerStations[v.stationsToHitPolice].hit
                 end
             elseif v.type == 'bank' then
                 if type(v.stationsToHitBank) == 'table' then
-                    local hits = 0
-                    for _, station in pairs(v.stationsToHitBank) do
-                        if type(station) == 'table' then
-                            local hits2 = 0
-                            for _, station2 in pairs(station) do
-                                if Config.PowerStations[station2].hit then hits2 += 1 end
-                                if hits2 == #station then allStationsHitBank = true end
-                            end
-                        else
-                            if Config.PowerStations[station].hit then hits += 1 end
-                            if hits == #v.stationsToHitBank then allStationsHitBank = true end
-                        end
-                    end
+                    allStationsHitBank = TableLoopStations(v.stationsToHitBank)
                 else
                     allStationsHitBank = Config.PowerStations[v.stationsToHitBank].hit
                 end
