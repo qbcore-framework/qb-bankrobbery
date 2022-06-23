@@ -2,11 +2,15 @@ fx_version 'cerulean'
 game 'gta5'
 
 description 'Bankrobbery for QB-Core'
-version '1.1.1'
+version '1.1.2'
 
 ui_page 'html/index.html'
 
-shared_script 'config.lua'
+shared_scripts {
+    'config.lua',
+    '@qb-core/shared/locale.lua',
+    'locales/en.lua' -- Change this to your preferred language
+}
 
 client_scripts {
     '@PolyZone/client.lua',
