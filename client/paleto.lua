@@ -33,12 +33,7 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
                         TriggerServerEvent('qb-bankrobbery:server:removeBankCard', '01')
                         TriggerServerEvent('qb-doorlock:server:updateState', 4, false, false, false, true, false, false)
                         if copsCalled or not Config.BigBanks["paleto"]["alarm"] then return end
-                        local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
-                        local street1 = GetStreetNameFromHashKey(s1)
-                        local street2 = GetStreetNameFromHashKey(s2)
-                        local streetLabel = street1
-                        if street2 then streetLabel = streetLabel .. " " .. street2 end
-                        TriggerServerEvent("qb-bankrobbery:server:callCops", "paleto", 0, streetLabel, pos)
+                        TriggerServerEvent("qb-bankrobbery:server:callCops", "paleto", 0, pos)
                         copsCalled = true
                     end, function() -- Cancel
                         StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
