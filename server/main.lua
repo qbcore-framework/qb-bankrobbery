@@ -312,7 +312,7 @@ AddEventHandler('qb-bankrobbery:server:SetSmallBankTimeout', function(BankId)
     end)
 end)
 
-RegisterNetEvent('qb-bankrobbery:server:callCops', function(type, bank, streetLabel, coords)
+RegisterNetEvent('qb-bankrobbery:server:callCops', function(type, bank, coords)
     if type == "small" then
         if not Config.SmallBanks[bank]["alarm"] then
             return error(Lang:t("event_trigger_wrong", {event = "qb-bankrobbery:server:callCops", extraInfo = " (smallbank "..bank..") ", source = source}))
@@ -326,7 +326,7 @@ RegisterNetEvent('qb-bankrobbery:server:callCops', function(type, bank, streetLa
             return error(Lang:t("event_trigger_wrong", {event = "qb-bankrobbery:server:callCops", extraInfo = " (pacific) ", source = source}))
         end
     end
-    TriggerClientEvent("qb-bankrobbery:client:robberyCall", -1, type, bank, streetLabel, coords)
+    TriggerClientEvent("qb-bankrobbery:client:robberyCall", -1, type, coords)
 end)
 
 RegisterNetEvent('qb-bankrobbery:server:SetStationStatus', function(key, isHit)
