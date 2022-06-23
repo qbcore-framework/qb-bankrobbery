@@ -46,12 +46,7 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardB', function()
                         TriggerServerEvent('qb-doorlock:server:updateState', 1, false, false, false, true, false, false)
                         TriggerServerEvent('qb-bankrobbery:server:removeBankCard', '02')
                         if copsCalled or not Config.BigBanks["pacific"]["alarm"] then return end
-                        local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
-                        local street1 = GetStreetNameFromHashKey(s1)
-                        local street2 = GetStreetNameFromHashKey(s2)
-                        local streetLabel = street1
-                        if street2 then streetLabel = streetLabel .. " " .. street2 end
-                        TriggerServerEvent("qb-bankrobbery:server:callCops", "pacific", 0, streetLabel, pos)
+                        TriggerServerEvent("qb-bankrobbery:server:callCops", "pacific", 0, pos)
                         copsCalled = true
                     end, function() -- Cancel
                         StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
@@ -95,12 +90,7 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
                             TriggerEvent("mhacking:show")
                             TriggerEvent("mhacking:start", math.random(5, 9), math.random(10, 15), OnHackPacificDone)
                             if copsCalled or not Config.BigBanks["pacific"]["alarm"] then return end
-                            local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
-                            local street1 = GetStreetNameFromHashKey(s1)
-                            local street2 = GetStreetNameFromHashKey(s2)
-                            local streetLabel = street1
-                            if street2 then streetLabel = streetLabel .. " " .. street2 end
-                            TriggerServerEvent("qb-bankrobbery:server:callCops", "pacific", 0, streetLabel, pos)
+                            TriggerServerEvent("qb-bankrobbery:server:callCops", "pacific", 0, pos)
                             copsCalled = true
                         end, function() -- Cancel
                             StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
