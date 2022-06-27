@@ -109,21 +109,21 @@ end
 RegisterNetEvent('qb-bankrobbery:server:setBankState', function(bankId)
     if robberyBusy then return end
     if bankId == "paleto" then
-        if Config.BigBanks["paleto"]["isOpened"] or #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks["paleto"]["coords"]) < 2.5 then
+        if Config.BigBanks["paleto"]["isOpened"] or #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks["paleto"]["coords"]) > 2.5 then
             return error("qb-bankrobbery:server:setBankState (paleto) was triggered when the bank was already open or when the player was outside of range, source: "..source)
         end
         Config.BigBanks["paleto"]["isOpened"] = true
         TriggerEvent('qb-bankrobbery:server:setTimeout')
         TriggerEvent('qb-scoreboard:server:SetActivityBusy', "paleto", true)
     elseif bankId == "pacific" then
-        if Config.BigBanks["pacific"]["isOpened"] or #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks["pacific"]["coords"][1]) < 2.5 then
+        if Config.BigBanks["pacific"]["isOpened"] or #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks["pacific"]["coords"][1]) > 2.5 then
             return error("qb-bankrobbery:server:setBankState (pacific) was triggered when the bank was already open or when the player was outside of range, source: "..source)
         end
         Config.BigBanks["pacific"]["isOpened"] = true
         TriggerEvent('qb-bankrobbery:server:setTimeout')
         TriggerEvent('qb-scoreboard:server:SetActivityBusy', "pacific", true)
     else
-        if Config.SmallBanks[bankId]["isOpened"] or #(GetEntityCoords(GetPlayerPed(source)) - Config.SmallBanks[bankId]["coords"]) < 2.5 then
+        if Config.SmallBanks[bankId]["isOpened"] or #(GetEntityCoords(GetPlayerPed(source)) - Config.SmallBanks[bankId]["coords"]) > 2.5 then
             return error("qb-bankrobbery:server:setBankState (smallbank number "..bankId..") was triggered when the bank was already open or when the player was outside of range, source: "..source)
         end
         Config.SmallBanks[bankId]["isOpened"] = true
@@ -137,12 +137,12 @@ end)
 
 RegisterNetEvent('qb-bankrobbery:server:setLockerState', function(bankId, lockerId, state, bool)
     if bankId == "paleto" or bankId == "pacific" then
-        if #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks[bankId]["lockers"][lockerId]["coords"]) < 2.5 then
+        if #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks[bankId]["lockers"][lockerId]["coords"]) > 2.5 then
             return error("qb-bankrobbery:server:setLockerState ("..bankId..") was triggered when the player was outside of range, source: "..source)
         end
         Config.BigBanks[bankId]["lockers"][lockerId][state] = bool
     else
-        if #(GetEntityCoords(GetPlayerPed(source)) - Config.SmallBanks[bankId]["lockers"][lockerId]["coords"]) < 2.5 then
+        if #(GetEntityCoords(GetPlayerPed(source)) - Config.SmallBanks[bankId]["lockers"][lockerId]["coords"]) > 2.5 then
             return error("qb-bankrobbery:server:setLockerState (smallbank number "..bankId..") was triggered when the player was outside of range, source: "..source)
         end
         Config.SmallBanks[bankId]["lockers"][lockerId][state] = bool
@@ -155,7 +155,7 @@ RegisterNetEvent('qb-bankrobbery:server:recieveItem', function(type, bankId, loc
     local ply = QBCore.Functions.GetPlayer(src)
     if not ply then return end
     if type == "small" then
-        if #(GetEntityCoords(GetPlayerPed(src)) - Config.SmallBanks[bankId]["lockers"][lockerId]["coords"]) < 2.5 then
+        if #(GetEntityCoords(GetPlayerPed(src)) - Config.SmallBanks[bankId]["lockers"][lockerId]["coords"]) > 2.5 then
             return error("qb-bankrobbery:server:receiveItem (smallbank number "..bankId..") was triggered when the player was outside of range, source: "..src)
         end
         local itemType = math.random(#Config.RewardTypes)
@@ -187,7 +187,7 @@ RegisterNetEvent('qb-bankrobbery:server:recieveItem', function(type, bankId, loc
             TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['weapon_stungun'], "add")
         end
     elseif type == "paleto" then
-        if #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks["paleto"]["lockers"][lockerId]["coords"]) < 2.5 then
+        if #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks["paleto"]["lockers"][lockerId]["coords"]) > 2.5 then
             return error("qb-bankrobbery:server:receiveItem (paleto) was triggered when the player was outside of range, source: "..source)
         end
         local itemType = math.random(#Config.RewardTypes)
@@ -219,7 +219,7 @@ RegisterNetEvent('qb-bankrobbery:server:recieveItem', function(type, bankId, loc
             TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['weapon_vintagepistol'], "add")
         end
     elseif type == "pacific" then
-        if #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks["pacific"]["lockers"][lockerId]["coords"]) < 2.5 then
+        if #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks["pacific"]["lockers"][lockerId]["coords"]) > 2.5 then
             return error("qb-bankrobbery:server:receiveItem (pacific) was triggered when the player was outside of range, source: "..source)
         end
         local itemType = math.random(#Config.RewardTypes)
