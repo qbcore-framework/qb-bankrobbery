@@ -1,5 +1,3 @@
-local QBCore = exports['qb-core']:GetCoreObject()
-
 local inBankCardBZone = false
 local inElectronickitZone = false
 local currentLocker = 0
@@ -7,13 +5,21 @@ local copsCalled = false
 
 -- Functions
 
+--- This will be triggered once the hack in the pacific bank is done
+--- @param success boolean
+--- @return nil
 local function OnHackPacificDone(success)
-    if success then
-        TriggerEvent('mhacking:hide')
-        TriggerServerEvent('qb-bankrobbery:server:setBankState', "pacific")
-    else
-		TriggerEvent('mhacking:hide')
-	end
+    Config.OnHackDone(success, "pacific")
+end
+
+--- This will load an animation dictionary so you can play an animation in that dictionary
+--- @param dict string
+--- @return nil
+local function loadAnimDict(dict)
+    RequestAnimDict(dict)
+    while not HasAnimDictLoaded(dict) do
+        Wait(0)
+    end
 end
 
 -- Events
@@ -21,50 +27,41 @@ end
 RegisterNetEvent('qb-bankrobbery:UseBankcardB', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
-    if math.random(1, 100) <= 85 and not QBCore.Functions.IsWearingGloves() then
-        TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
-    end
+    Config.OnEvidence(pos, 85)
     if not inBankCardBZone then return end
     QBCore.Functions.TriggerCallback('qb-bankrobbery:server:isRobberyActive', function(isBusy)
         if not isBusy then
             if CurrentCops >= Config.MinimumPacificPolice then
                 if not Config.BigBanks["pacific"]["isOpened"] then
-                    TriggerEvent('inventory:client:requiredItems', {
+                    Config.ShowRequiredItems({
                         [1] = {name = QBCore.Shared.Items["security_card_02"]["name"], image = QBCore.Shared.Items["security_card_02"]["image"]}
                     }, false)
-                    QBCore.Functions.Progressbar("security_pass", "Please validate ..", math.random(5000, 10000), false, true, {
+                    loadAnimDict("anim@gangops@facility@servers@")
+                    TaskPlayAnim(ped, 'anim@gangops@facility@servers@', 'hotwire', 3.0, 3.0, -1, 1, 0, false, false, false)
+                    QBCore.Functions.Progressbar("security_pass", Lang:t("general.validating_bankcard"), math.random(5000, 10000), false, true, {
                         disableMovement = true,
                         disableCarMovement = true,
                         disableMouse = false,
                         disableCombat = true,
-                    }, {
-                        animDict = "anim@gangops@facility@servers@",
-                        anim = "hotwire",
-                        flags = 16,
-                    }, {}, {}, function() -- Done
+                    }, {}, {}, {}, function() -- Done
                         StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
-                        TriggerServerEvent('qb-doorlock:server:updateState', 1, false, false, false, true, false, false)
+                        Config.DoorlockAction(1, false)
                         TriggerServerEvent('qb-bankrobbery:server:removeBankCard', '02')
                         if copsCalled or not Config.BigBanks["pacific"]["alarm"] then return end
-                        local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
-                        local street1 = GetStreetNameFromHashKey(s1)
-                        local street2 = GetStreetNameFromHashKey(s2)
-                        local streetLabel = street1
-                        if street2 then streetLabel = streetLabel .. " " .. street2 end
-                        TriggerServerEvent("qb-bankrobbery:server:callCops", "pacific", 0, streetLabel, pos)
+                        TriggerServerEvent("qb-bankrobbery:server:callCops", "pacific", 0, pos)
                         copsCalled = true
                     end, function() -- Cancel
                         StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
-                        QBCore.Functions.Notify("Canceled..", "error")
+                        QBCore.Functions.Notify(Lang:t("error.cancel_message"), "error")
                     end)
                 else
-                    QBCore.Functions.Notify("Looks like the bank is already open ..", "error")
+                    QBCore.Functions.Notify(Lang:t("error.bank_already_open"), "error")
                 end
             else
-                QBCore.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
+                QBCore.Functions.Notify(Lang:t("error.minimum_police_required", {police = Config.MinimumPacificPolice}), "error")
             end
         else
-            QBCore.Functions.Notify("The security lock is active, opening the door is currently not possible.", "error", 5500)
+            QBCore.Functions.Notify(Lang:t("error.security_lock_active"), "error", 5500)
         end
     end)
 end)
@@ -77,47 +74,39 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
         if not isBusy then
             if CurrentCops >= Config.MinimumPacificPolice then
                 if not Config.BigBanks["pacific"]["isOpened"] then
-                    QBCore.Functions.TriggerCallback('QBCore:HasItem', function(result)
-                        if result then
-                            TriggerEvent('inventory:client:requiredItems', nil, false)
-                            QBCore.Functions.Progressbar("hack_gate", "Connecting the hacking device ..", math.random(5000, 10000), false, true, {
-                                disableMovement = true,
-                                disableCarMovement = true,
-                                disableMouse = false,
-                                disableCombat = true,
-                            }, {
-                                animDict = "anim@gangops@facility@servers@",
-                                anim = "hotwire",
-                                flags = 16,
-                            }, {}, {}, function() -- Done
-                                TriggerServerEvent('qb-bankrobbery:server:removeElectronicKit')
-                                StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
-                                TriggerEvent("mhacking:show")
-                                TriggerEvent("mhacking:start", math.random(5, 9), math.random(10, 15), OnHackPacificDone)
-                                if copsCalled or not Config.BigBanks["pacific"]["alarm"] then return end
-                                local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
-                                local street1 = GetStreetNameFromHashKey(s1)
-                                local street2 = GetStreetNameFromHashKey(s2)
-                                local streetLabel = street1
-                                if street2 then streetLabel = streetLabel .. " " .. street2 end
-                                TriggerServerEvent("qb-bankrobbery:server:callCops", "pacific", 0, streetLabel, pos)
-                                copsCalled = true
-                            end, function() -- Cancel
-                                StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
-                                QBCore.Functions.Notify("Canceled", "error")
-                            end)
-                        else
-                            QBCore.Functions.Notify("You're missing an item ..", "error")
-                        end
-                    end, "trojan_usb")
+                    local hasItem = Config.HasItem({"trojan_usb", "electronickit"})
+                    if hasItem then
+                        Config.ShowRequiredItems(nil, false)
+                        loadAnimDict("anim@gangops@facility@servers@")
+                        TaskPlayAnim(ped, 'anim@gangops@facility@servers@', 'hotwire', 3.0, 3.0, -1, 1, 0, false, false, false)
+                        QBCore.Functions.Progressbar("hack_gate", Lang:t("general.connecting_hacking_device"), math.random(5000, 10000), false, true, {
+                            disableMovement = true,
+                            disableCarMovement = true,
+                            disableMouse = false,
+                            disableCombat = true,
+                        }, {}, {}, {}, function() -- Done
+                            TriggerServerEvent('qb-bankrobbery:server:removeElectronicKit')
+                            StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
+                            TriggerEvent("mhacking:show")
+                            TriggerEvent("mhacking:start", math.random(5, 9), math.random(10, 15), OnHackPacificDone)
+                            if copsCalled or not Config.BigBanks["pacific"]["alarm"] then return end
+                            TriggerServerEvent("qb-bankrobbery:server:callCops", "pacific", 0, pos)
+                            copsCalled = true
+                        end, function() -- Cancel
+                            StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
+                            QBCore.Functions.Notify(Lang:t("error.cancel_message"), "error")
+                        end)
+                    else
+                        QBCore.Functions.Notify(Lang:t("error.missing_item"), "error")
+                    end
                 else
-                    QBCore.Functions.Notify("Looks like the bank is already open", "error")
+                    QBCore.Functions.Notify(Lang:t("error.bank_already_open"), "error")
                 end
             else
-                QBCore.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
+                QBCore.Functions.Notify(Lang:t("error.minimum_police_required", {police = Config.MinimumPacificPolice}), "error")
             end
         else
-            QBCore.Functions.Notify("The security lock is active, opening the door is currently not possible.", "error", 5500)
+            QBCore.Functions.Notify(Lang:t("error.security_lock_active"), "error", 5500)
         end
     end)
 end)
@@ -135,11 +124,11 @@ CreateThread(function()
     bankCardBZone:onPlayerInOut(function(inside)
         inBankCardBZone = inside
         if inside and not Config.BigBanks["pacific"]["isOpened"] then
-            TriggerEvent('inventory:client:requiredItems', {
+            Config.ShowRequiredItems({
                 [1] = {name = QBCore.Shared.Items["security_card_02"]["name"], image = QBCore.Shared.Items["security_card_02"]["image"]}
             }, true)
         else
-            TriggerEvent('inventory:client:requiredItems', {
+            Config.ShowRequiredItems({
                 [1] = {name = QBCore.Shared.Items["security_card_02"]["name"], image = QBCore.Shared.Items["security_card_02"]["image"]}
             }, false)
         end
@@ -154,12 +143,12 @@ CreateThread(function()
     electronickitZone:onPlayerInOut(function(inside)
         inElectronickitZone = inside
         if inside and not Config.BigBanks["pacific"]["isOpened"] then
-            TriggerEvent('inventory:client:requiredItems', {
+            Config.ShowRequiredItems({
                 [1] = {name = QBCore.Shared.Items["electronickit"]["name"], image = QBCore.Shared.Items["electronickit"]["image"]},
                 [2] = {name = QBCore.Shared.Items["trojan_usb"]["name"], image = QBCore.Shared.Items["trojan_usb"]["image"]},
             }, true)
         else
-            TriggerEvent('inventory:client:requiredItems', {
+            Config.ShowRequiredItems({
                 [1] = {name = QBCore.Shared.Items["electronickit"]["name"], image = QBCore.Shared.Items["electronickit"]["image"]},
                 [2] = {name = QBCore.Shared.Items["trojan_usb"]["name"], image = QBCore.Shared.Items["trojan_usb"]["image"]},
             }, false)
@@ -175,13 +164,13 @@ CreateThread(function()
     thermite1Zone:onPlayerInOut(function(inside)
         if inside and not Config.BigBanks["pacific"]["thermite"][1]["isOpened"] then
             currentThermiteGate = Config.BigBanks["pacific"]["thermite"][1]["doorId"]
-            TriggerEvent('inventory:client:requiredItems', {
+            Config.ShowRequiredItems({
                 [1] = {name = QBCore.Shared.Items["thermite"]["name"], image = QBCore.Shared.Items["thermite"]["image"]},
             }, true)
         else
             if currentThermiteGate == Config.BigBanks["pacific"]["thermite"][1]["doorId"] then
                 currentThermiteGate = 0
-                TriggerEvent('inventory:client:requiredItems', {
+                Config.ShowRequiredItems({
                     [1] = {name = QBCore.Shared.Items["thermite"]["name"], image = QBCore.Shared.Items["thermite"]["image"]},
                 }, false)
             end
@@ -197,13 +186,13 @@ CreateThread(function()
     thermite2Zone:onPlayerInOut(function(inside)
         if inside and not Config.BigBanks["pacific"]["thermite"][2]["isOpened"] then
             currentThermiteGate = Config.BigBanks["pacific"]["thermite"][2]["doorId"]
-            TriggerEvent('inventory:client:requiredItems', {
+            Config.ShowRequiredItems({
                 [1] = {name = QBCore.Shared.Items["thermite"]["name"], image = QBCore.Shared.Items["thermite"]["image"]},
             }, true)
         else
             if currentThermiteGate == Config.BigBanks["pacific"]["thermite"][2]["doorId"] then
                 currentThermiteGate = 0
-                TriggerEvent('inventory:client:requiredItems', {
+                Config.ShowRequiredItems({
                     [1] = {name = QBCore.Shared.Items["thermite"]["name"], image = QBCore.Shared.Items["thermite"]["image"]},
                 }, false)
             end
@@ -227,7 +216,7 @@ CreateThread(function()
                             return not IsDrilling and Config.BigBanks["pacific"]["isOpened"] and not Config.BigBanks["pacific"]["lockers"][k]["isBusy"] and not Config.BigBanks["pacific"]["lockers"][k]["isOpened"]
                         end,
                         icon = 'fa-solid fa-vault',
-                        label = 'Break Safe Open',
+                        label = Lang:t("general.break_safe_open_option_target"),
                     },
                 },
                 distance = 1.5
@@ -242,7 +231,7 @@ CreateThread(function()
             })
             lockerZone:onPlayerInOut(function(inside)
                 if inside and not IsDrilling and Config.BigBanks["pacific"]["isOpened"] and not Config.BigBanks["pacific"]["lockers"][k]["isBusy"] and not Config.BigBanks["pacific"]["lockers"][k]["isOpened"] then
-                    exports['qb-core']:DrawText('[E] Break open the safe', 'right')
+                    exports['qb-core']:DrawText(Lang:t("general.break_safe_open_option_drawtext"), 'right')
                     currentLocker = k
                 else
                     if currentLocker == k then
@@ -266,7 +255,7 @@ CreateThread(function()
                         if CurrentCops >= Config.MinimumPacificPolice then
                             openLocker("pacific", currentLocker)
                         else
-                            QBCore.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
+                            QBCore.Functions.Notify(Lang:t("error.minimum_police_required", {police = Config.MinimumPacificPolice}), "error")
                         end
                         sleep = 1000
                     end
