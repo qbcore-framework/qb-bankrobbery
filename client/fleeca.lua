@@ -1,5 +1,4 @@
-local QBCore = exports['qb-core']:GetCoreObject()
-
+QBCore = exports['qb-core']:GetCoreObject()
 isLoggedIn = LocalPlayer.state['isLoggedIn']
 currentThermiteGate = 0
 CurrentCops = 0
@@ -12,6 +11,8 @@ local currentLocker = 0
 
 -- Handlers
 
+--- This will reset the bank doors to the position that they should be in, so if the bank is still open, it will open the door and vise versa
+--- @return nil
 local function ResetBankDoors()
     for k in pairs(Config.SmallBanks) do
         local object = GetClosestObjectOfType(Config.SmallBanks[k]["coords"]["x"], Config.SmallBanks[k]["coords"]["y"], Config.SmallBanks[k]["coords"]["z"], 5.0, Config.SmallBanks[k]["object"], false, false, false)
@@ -42,13 +43,11 @@ AddEventHandler('onResourceStop', function(resource)
     ResetBankDoors()
 end)
 
-RegisterNetEvent('police:SetCopCount', function(amount)
-    CurrentCops = amount
-end)
-
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    QBCore.Functions.TriggerCallback('qb-bankrobbery:server:GetConfig', function(config)
-        Config = config
+    QBCore.Functions.TriggerCallback('qb-bankrobbery:server:GetConfig', function(config1, config2, config3)
+        Config.PowerStations = config1
+        Config.BigBanks = config2
+        Config.SmallBanks = config3
     end)
     ResetBankDoors()
     isLoggedIn = true
@@ -60,14 +59,18 @@ end)
 
 -- Functions
 
+--- This will open the bank door of the paleto bank
+--- @return nil
 local function OpenPaletoDoor()
-    TriggerServerEvent('qb-doorlock:server:updateState', 4, false, false, false, true, false, false)
+    Config.DoorlockAction(4, false)
     local object = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
     if object ~= 0 then
         SetEntityHeading(object, Config.BigBanks["paleto"]["heading"].open)
     end
 end
 
+--- This will open the bank door of the pacific bank
+--- @return nil
 local function OpenPacificDoor()
     local object = GetClosestObjectOfType(Config.BigBanks["pacific"]["coords"][2]["x"], Config.BigBanks["pacific"]["coords"][2]["y"], Config.BigBanks["pacific"]["coords"][2]["z"], 20.0, Config.BigBanks["pacific"]["object"], false, false, false)
     local entHeading = Config.BigBanks["pacific"]["heading"].closed
@@ -82,15 +85,16 @@ local function OpenPacificDoor()
     end
 end
 
+--- This is triggered once the hack at a small bank is done
+--- @param success boolean
+--- @return nil
 local function OnHackDone(success)
-    if success then
-        TriggerEvent('mhacking:hide')
-        TriggerServerEvent('qb-bankrobbery:server:setBankState', closestBank)
-    else
-		TriggerEvent('mhacking:hide')
-	end
+    Config.OnHackDone(success, closestBank)
 end
 
+--- This will load an animation dictionary so you can play an animation in that dictionary
+--- @param dict string
+--- @return nil
 local function loadAnimDict(dict)
     RequestAnimDict(dict)
     while not HasAnimDictLoaded(dict) do
@@ -98,6 +102,9 @@ local function loadAnimDict(dict)
     end
 end
 
+--- This will open the bank door of any small bank
+--- @param bankId number
+--- @return nil
 local function OpenBankDoor(bankId)
     local object = GetClosestObjectOfType(Config.SmallBanks[bankId]["coords"]["x"], Config.SmallBanks[bankId]["coords"]["y"], Config.SmallBanks[bankId]["coords"]["z"], 5.0, Config.SmallBanks[bankId]["object"], false, false, false)
     local entHeading = Config.SmallBanks[bankId]["heading"].closed
@@ -112,139 +119,125 @@ local function OpenBankDoor(bankId)
     end
 end
 
+--- This will trigger the sequence of opening a safe locker of a bank
+--- @param bankId string | number
+--- @param lockerId number
+--- @return nil
 function openLocker(bankId, lockerId) -- Globally Used
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
-    if math.random(1, 100) <= 65 and not QBCore.Functions.IsWearingGloves() then
-        TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
-    end
+    Config.OnEvidence(pos, 65)
     TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', true)
     if bankId == "paleto" then
-        QBCore.Functions.TriggerCallback('QBCore:HasItem', function(hasItem)
-            if hasItem then
-                loadAnimDict("anim@heists@fleeca_bank@drilling")
-                TaskPlayAnim(ped, 'anim@heists@fleeca_bank@drilling', 'drill_straight_idle' , 3.0, 3.0, -1, 1, 0, false, false, false)
-                local DrillObject = CreateObject(`hei_prop_heist_drill`, pos.x, pos.y, pos.z, true, true, true)
-                AttachEntityToEntity(DrillObject, ped, GetPedBoneIndex(ped, 57005), 0.14, 0, -0.01, 90.0, -90.0, 180.0, true, true, false, true, 1, true)
-                IsDrilling = true
-                QBCore.Functions.Progressbar("open_locker_drill", "Breaking open the safe ..", math.random(18000, 30000), false, true, {
-                    disableMovement = true,
-                    disableCarMovement = true,
-                    disableMouse = false,
-                    disableCombat = true,
-                }, {}, {}, {}, function() -- Done
-                    StopAnimTask(ped, "anim@heists@fleeca_bank@drilling", "drill_straight_idle", 1.0)
-                    DetachEntity(DrillObject, true, true)
-                    DeleteObject(DrillObject)
-                    TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isOpened', true)
-                    TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
-                    TriggerServerEvent('qb-bankrobbery:server:recieveItem', 'paleto', bankId, lockerId)
-                    QBCore.Functions.Notify("Successful!", "success")
-                    SetTimeout(500, function()
-                        IsDrilling = false
-                    end)
-                end, function() -- Cancel
-                    StopAnimTask(ped, "anim@heists@fleeca_bank@drilling", "drill_straight_idle", 1.0)
-                    TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
-                    DetachEntity(DrillObject, true, true)
-                    DeleteObject(DrillObject)
-                    QBCore.Functions.Notify("Canceled..", "error")
-                    SetTimeout(500, function()
-                        IsDrilling = false
-                    end)
-                end)
-                CreateThread(function()
-                    while IsDrilling do
-                        TriggerServerEvent('hud:server:GainStress', math.random(4, 8))
-                        Wait(10000)
-                    end
-                end)
-            else
-                QBCore.Functions.Notify("Looks like the safe lock is too strong ..", "error")
+        local hasItem = Config.HasItem("drill")
+        if hasItem then
+            loadAnimDict("anim@heists@fleeca_bank@drilling")
+            TaskPlayAnim(ped, 'anim@heists@fleeca_bank@drilling', 'drill_straight_idle', 3.0, 3.0, -1, 1, 0, false, false, false)
+            local DrillObject = CreateObject(`hei_prop_heist_drill`, pos.x, pos.y, pos.z, true, true, true)
+            AttachEntityToEntity(DrillObject, ped, GetPedBoneIndex(ped, 57005), 0.14, 0, -0.01, 90.0, -90.0, 180.0, true, true, false, true, 1, true)
+            IsDrilling = true
+            QBCore.Functions.Progressbar("open_locker_drill", Lang:t("general.breaking_open_safe"), math.random(18000, 30000), false, true, {
+                disableMovement = true,
+                disableCarMovement = true,
+                disableMouse = false,
+                disableCombat = true,
+            }, {}, {}, {}, function() -- Done
+                StopAnimTask(ped, "anim@heists@fleeca_bank@drilling", "drill_straight_idle", 1.0)
+                DetachEntity(DrillObject, true, true)
+                DeleteObject(DrillObject)
+                TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isOpened', true)
                 TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
-            end
-        end, "drill")
+                TriggerServerEvent('qb-bankrobbery:server:recieveItem', 'paleto', bankId, lockerId)
+                QBCore.Functions.Notify(Lang:t("success.success_message"), "success")
+                SetTimeout(500, function()
+                    IsDrilling = false
+                end)
+            end, function() -- Cancel
+                StopAnimTask(ped, "anim@heists@fleeca_bank@drilling", "drill_straight_idle", 1.0)
+                TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
+                DetachEntity(DrillObject, true, true)
+                DeleteObject(DrillObject)
+                QBCore.Functions.Notify(Lang:t("error.cancel_message"), "error")
+                SetTimeout(500, function()
+                    IsDrilling = false
+                end)
+            end)
+        else
+            QBCore.Functions.Notify(Lang:t("error.safe_too_strong"), "error")
+            TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
+        end
     elseif bankId == "pacific" then
-        QBCore.Functions.TriggerCallback('QBCore:HasItem', function(hasItem)
-            if hasItem then
-                loadAnimDict("anim@heists@fleeca_bank@drilling")
-                TaskPlayAnim(ped, 'anim@heists@fleeca_bank@drilling', 'drill_straight_idle' , 3.0, 3.0, -1, 1, 0, false, false, false)
-                local DrillObject = CreateObject(`hei_prop_heist_drill`, pos.x, pos.y, pos.z, true, true, true)
-                AttachEntityToEntity(DrillObject, ped, GetPedBoneIndex(ped, 57005), 0.14, 0, -0.01, 90.0, -90.0, 180.0, true, true, false, true, 1, true)
-                IsDrilling = true
-                QBCore.Functions.Progressbar("open_locker_drill", "Breaking open the safe ..", math.random(18000, 30000), false, true, {
-                    disableMovement = true,
-                    disableCarMovement = true,
-                    disableMouse = false,
-                    disableCombat = true,
-                }, {}, {}, {}, function() -- Done
-                    StopAnimTask(ped, "anim@heists@fleeca_bank@drilling", "drill_straight_idle", 1.0)
-                    DetachEntity(DrillObject, true, true)
-                    DeleteObject(DrillObject)
+        local hasItem = Config.HasItem("drill")
+        if hasItem then
+            loadAnimDict("anim@heists@fleeca_bank@drilling")
+            TaskPlayAnim(ped, 'anim@heists@fleeca_bank@drilling', 'drill_straight_idle', 3.0, 3.0, -1, 1, 0, false, false, false)
+            local DrillObject = CreateObject(`hei_prop_heist_drill`, pos.x, pos.y, pos.z, true, true, true)
+            AttachEntityToEntity(DrillObject, ped, GetPedBoneIndex(ped, 57005), 0.14, 0, -0.01, 90.0, -90.0, 180.0, true, true, false, true, 1, true)
+            IsDrilling = true
+            QBCore.Functions.Progressbar("open_locker_drill", Lang:t("general.breaking_open_safe"), math.random(18000, 30000), false, true, {
+                disableMovement = true,
+                disableCarMovement = true,
+                disableMouse = false,
+                disableCombat = true,
+            }, {}, {}, {}, function() -- Done
+                StopAnimTask(ped, "anim@heists@fleeca_bank@drilling", "drill_straight_idle", 1.0)
+                DetachEntity(DrillObject, true, true)
+                DeleteObject(DrillObject)
 
-                    TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isOpened', true)
-                    TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
-                    TriggerServerEvent('qb-bankrobbery:server:recieveItem', 'pacific', bankId, lockerId)
-                    QBCore.Functions.Notify("Successful!", "success")
-                    SetTimeout(500, function()
-                        IsDrilling = false
-                    end)
-                end, function() -- Cancel
-                    StopAnimTask(ped, "anim@heists@fleeca_bank@drilling", "drill_straight_idle", 1.0)
-                    TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
-                    DetachEntity(DrillObject, true, true)
-                    DeleteObject(DrillObject)
-                    QBCore.Functions.Notify("Canceled..", "error")
-                    SetTimeout(500, function()
-                        IsDrilling = false
-                    end)
-                end)
-                CreateThread(function()
-                    while IsDrilling do
-                        TriggerServerEvent('hud:server:GainStress', math.random(4, 8))
-                        Wait(10000)
-                    end
-                end)
-            else
-                QBCore.Functions.Notify("Looks like the safe lock is too strong ..", "error")
+                TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isOpened', true)
                 TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
-            end
-        end, "drill")
+                TriggerServerEvent('qb-bankrobbery:server:recieveItem', 'pacific', bankId, lockerId)
+                QBCore.Functions.Notify(Lang:t("success.success_message"), "success")
+                SetTimeout(500, function()
+                    IsDrilling = false
+                end)
+            end, function() -- Cancel
+                StopAnimTask(ped, "anim@heists@fleeca_bank@drilling", "drill_straight_idle", 1.0)
+                TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
+                DetachEntity(DrillObject, true, true)
+                DeleteObject(DrillObject)
+                QBCore.Functions.Notify(Lang:t("error.cancel_message"), "error")
+                SetTimeout(500, function()
+                    IsDrilling = false
+                end)
+            end)
+        else
+            QBCore.Functions.Notify(Lang:t("error.safe_too_strong"), "error")
+            TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
+        end
     else
         IsDrilling = true
-        QBCore.Functions.Progressbar("open_locker", "Breaking open the safe ..", math.random(27000, 37000), false, true, {
+        loadAnimDict("anim@gangops@facility@servers@")
+        TaskPlayAnim(ped, 'anim@gangops@facility@servers@', 'hotwire', 3.0, 3.0, -1, 1, 0, false, false, false)
+        QBCore.Functions.Progressbar("open_locker", Lang:t("general.breaking_open_safe"), math.random(27000, 37000), false, true, {
             disableMovement = true,
             disableCarMovement = true,
             disableMouse = false,
             disableCombat = true,
-        }, {
-            animDict = "anim@gangops@facility@servers@",
-            anim = "hotwire",
-            flags = 16,
-        }, {}, {}, function() -- Done
+        }, {}, {}, {}, function() -- Done
             StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
             TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isOpened', true)
             TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
             TriggerServerEvent('qb-bankrobbery:server:recieveItem', 'small', bankId, lockerId)
-            QBCore.Functions.Notify("Successful!", "success")
+            QBCore.Functions.Notify(Lang:t("success.success_message"), "success")
             SetTimeout(500, function()
                 IsDrilling = false
             end)
         end, function() -- Cancel
             StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
             TriggerServerEvent('qb-bankrobbery:server:setLockerState', bankId, lockerId, 'isBusy', false)
-            QBCore.Functions.Notify("Canceled..", "error")
+            QBCore.Functions.Notify(Lang:t("error.cancel_message"), "error")
             SetTimeout(500, function()
                 IsDrilling = false
             end)
         end)
-        CreateThread(function()
-            while IsDrilling do
-                TriggerServerEvent('hud:server:GainStress', math.random(4, 8))
-                Wait(10000)
-            end
-        end)
     end
+    CreateThread(function()
+        while IsDrilling do
+            Config.OnDrillingAction()
+            Wait(10000)
+        end
+    end)
 end
 
 -- Events
@@ -252,59 +245,49 @@ end
 RegisterNetEvent('electronickit:UseElectronickit', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
-    if math.random(1, 100) <= 85 and not QBCore.Functions.IsWearingGloves() then
-        TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
-    end
+    Config.OnEvidence(pos, 85)
     if closestBank == 0 or not inElectronickitZone then return end
     QBCore.Functions.TriggerCallback('qb-bankrobbery:server:isRobberyActive', function(isBusy)
         if not isBusy then
             if CurrentCops >= Config.MinimumFleecaPolice then
                 if not Config.SmallBanks[closestBank]["isOpened"] then
-                    QBCore.Functions.TriggerCallback('QBCore:HasItem', function(result)
-                        if result then
-                            TriggerEvent('inventory:client:requiredItems', {
-                                [1] = {name = QBCore.Shared.Items["electronickit"]["name"], image = QBCore.Shared.Items["electronickit"]["image"]},
-                                [2] = {name = QBCore.Shared.Items["trojan_usb"]["name"], image = QBCore.Shared.Items["trojan_usb"]["image"]}
-                            }, false)
-                            QBCore.Functions.Progressbar("hack_gate", "Connecting the hacking device ..", math.random(5000, 10000), false, true, {
-                                disableMovement = true,
-                                disableCarMovement = true,
-                                disableMouse = false,
-                                disableCombat = true,
-                            }, {
-                                animDict = "anim@gangops@facility@servers@",
-                                anim = "hotwire",
-                                flags = 16,
-                            }, {}, {}, function() -- Done
-                                StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
-                                TriggerServerEvent('qb-bankrobbery:server:removeElectronicKit')
-                                TriggerEvent("mhacking:show")
-                                TriggerEvent("mhacking:start", math.random(6, 7), math.random(12, 15), OnHackDone)
-                                if copsCalled or not Config.SmallBanks[closestBank]["alarm"] then return end
-                                local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
-                                local street1 = GetStreetNameFromHashKey(s1)
-                                local street2 = GetStreetNameFromHashKey(s2)
-                                local streetLabel = street1
-                                if street2 then streetLabel = streetLabel .. " " .. street2 end
-                                TriggerServerEvent("qb-bankrobbery:server:callCops", "small", closestBank, streetLabel, pos)
-                                copsCalled = true
-                                SetTimeout(60000 * Config.OutlawCooldown, function() copsCalled = false end)
-                            end, function() -- Cancel
-                                StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
-                                QBCore.Functions.Notify("Canceled..", "error")
-                            end)
-                        else
-                            QBCore.Functions.Notify("You're missing an item ..", "error")
-                        end
-                    end, {["trojan_usb"] = 1, ["electronickit"] = 1})
+                    local hasItem = Config.HasItem({"trojan_usb", "electronickit"})
+                    if hasItem then
+                        Config.ShowRequiredItems({
+                            [1] = {name = QBCore.Shared.Items["electronickit"]["name"], image = QBCore.Shared.Items["electronickit"]["image"]},
+                            [2] = {name = QBCore.Shared.Items["trojan_usb"]["name"], image = QBCore.Shared.Items["trojan_usb"]["image"]}
+                        }, false)
+                        loadAnimDict("anim@gangops@facility@servers@")
+                        TaskPlayAnim(ped, 'anim@gangops@facility@servers@', 'hotwire', 3.0, 3.0, -1, 1, 0, false, false, false)
+                        QBCore.Functions.Progressbar("hack_gate", Lang:t("general.connecting_hacking_device"), math.random(5000, 10000), false, true, {
+                            disableMovement = true,
+                            disableCarMovement = true,
+                            disableMouse = false,
+                            disableCombat = true,
+                        }, {}, {}, {}, function() -- Done
+                            StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
+                            TriggerServerEvent('qb-bankrobbery:server:removeElectronicKit')
+                            TriggerEvent("mhacking:show")
+                            TriggerEvent("mhacking:start", math.random(6, 7), math.random(12, 15), OnHackDone)
+                            if copsCalled or not Config.SmallBanks[closestBank]["alarm"] then return end
+                            TriggerServerEvent("qb-bankrobbery:server:callCops", "small", closestBank, pos)
+                            copsCalled = true
+                            SetTimeout(60000 * Config.OutlawCooldown, function() copsCalled = false end)
+                        end, function() -- Cancel
+                            StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
+                            QBCore.Functions.Notify(Lang:t("error.cancel_message"), "error")
+                        end)
+                    else
+                        QBCore.Functions.Notify(Lang:t("error.missing_item"), "error")
+                    end
                 else
-                    QBCore.Functions.Notify("Looks like the bank is already open ..", "error")
+                    QBCore.Functions.Notify(Lang:t("error.bank_already_open"), "error")
                 end
             else
-                QBCore.Functions.Notify('Minimum Of '..Config.MinimumFleecaPolice..' Police Needed', "error")
+                QBCore.Functions.Notify(Lang:t("error.minimum_police_required", {police = Config.MinimumFleecaPolice}), "error")
             end
         else
-            QBCore.Functions.Notify("The security lock is active, opening the door is currently not possible.", "error", 5500)
+            QBCore.Functions.Notify(Lang:t("error.security_lock_active"), "error", 5500)
         end
     end)
 end)
@@ -342,7 +325,7 @@ RegisterNetEvent('qb-bankrobbery:client:BankSecurity', function(key, status)
     elseif type(key) == 'number' then
         Config.SmallBanks[key]["alarm"] = status
     else
-        error('qb-bankrobbery:client:BankSecurity did not receive the right type of key\nreceived type: ' .. type(key) .. '\nreceived value: ' .. key)
+        error(Lang:t("error.wrong_type", {receiver = 'qb-bankrobbery:client:BankSecurity', argument = "key", receivedType = type(key), receivedValue = key, expected = "table/array"}))
     end
 end)
 
@@ -364,124 +347,51 @@ RegisterNetEvent('qb-bankrobbery:client:ResetFleecaLockers', function(BankId)
     end
 end)
 
-RegisterNetEvent('qb-bankrobbery:client:robberyCall', function(type, key, streetLabel, coords)
+RegisterNetEvent('qb-bankrobbery:client:robberyCall', function(type, coords)
     if not isLoggedIn then return end
     local PlayerJob = QBCore.Functions.GetPlayerData().job
-    if PlayerJob.name == "police" and PlayerJob.onduty then
-        local cameraId
-        local bank
-        if type == "small" then
-            cameraId = Config.SmallBanks[key]["camId"]
-            bank = "Fleeca"
-            PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-            TriggerEvent('qb-policealerts:client:AddPoliceAlert', {
-                timeOut = 10000,
-                alertTitle = "Fleeca bank robbery attempt",
-                coords = {
-                    x = coords.x,
-                    y = coords.y,
-                    z = coords.z,
-                },
-                details = {
-                    [1] = {
-                        icon = '<i class="fas fa-university"></i>',
-                        detail = bank,
-                    },
-                    [2] = {
-                        icon = '<i class="fas fa-video"></i>',
-                        detail = cameraId,
-                    },
-                    [3] = {
-                        icon = '<i class="fas fa-globe-europe"></i>',
-                        detail = streetLabel,
-                    },
-                },
-                callSign = QBCore.Functions.GetPlayerData().metadata["callsign"],
-            })
-        elseif type == "paleto" then
-            cameraId = Config.BigBanks["paleto"]["camId"]
-            bank = "Blaine County Savings"
-            PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-            Wait(100)
-            PlaySoundFrontend( -1, "Beep_Red", "DLC_HEIST_HACKING_SNAKE_SOUNDS", 1 )
-            Wait(100)
-            PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-            Wait(100)
-            PlaySoundFrontend( -1, "Beep_Red", "DLC_HEIST_HACKING_SNAKE_SOUNDS", 1 )
-            TriggerEvent('qb-policealerts:client:AddPoliceAlert', {
-                timeOut = 10000,
-                alertTitle = "Blain County Savings bank robbery attempt",
-                coords = {
-                    x = coords.x,
-                    y = coords.y,
-                    z = coords.z,
-                },
-                details = {
-                    [1] = {
-                        icon = '<i class="fas fa-university"></i>',
-                        detail = bank,
-                    },
-                    [2] = {
-                        icon = '<i class="fas fa-video"></i>',
-                        detail = cameraId,
-                    },
-                },
-                callSign = QBCore.Functions.GetPlayerData().metadata["callsign"],
-            })
-        elseif type == "pacific" then
-            bank = "Pacific Standard Bank"
-            PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-            Wait(100)
-            PlaySoundFrontend( -1, "Beep_Red", "DLC_HEIST_HACKING_SNAKE_SOUNDS", 1 )
-            Wait(100)
-            PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-            Wait(100)
-            PlaySoundFrontend( -1, "Beep_Red", "DLC_HEIST_HACKING_SNAKE_SOUNDS", 1 )
-            TriggerEvent('qb-policealerts:client:AddPoliceAlert', {
-                timeOut = 10000,
-                alertTitle = "Pacific Standard Bank robbery attempt",
-                coords = {
-                    x = coords.x,
-                    y = coords.y,
-                    z = coords.z,
-                },
-                details = {
-                    [1] = {
-                        icon = '<i class="fas fa-university"></i>',
-                        detail = bank,
-                    },
-                    [2] = {
-                        icon = '<i class="fas fa-video"></i>',
-                        detail = "1 | 2 | 3",
-                    },
-                    [3] = {
-                        icon = '<i class="fas fa-globe-europe"></i>',
-                        detail = "Alta St",
-                    },
-                },
-                callSign = QBCore.Functions.GetPlayerData().metadata["callsign"],
-            })
-        end
-        local transG = 250
-        local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
-        SetBlipSprite(blip, 487)
-        SetBlipColour(blip, 4)
-        SetBlipDisplay(blip, 4)
+    if PlayerJob.name ~= "police" or not PlayerJob.onduty then return end
+    if type == "small" then
+        PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
+        Config.OnPoliceAlert(Lang:t("general.fleeca_robbery_alert"))
+    elseif type == "paleto" then
+        PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
+        Wait(100)
+        PlaySoundFrontend( -1, "Beep_Red", "DLC_HEIST_HACKING_SNAKE_SOUNDS", 1 )
+        Wait(100)
+        PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
+        Wait(100)
+        PlaySoundFrontend( -1, "Beep_Red", "DLC_HEIST_HACKING_SNAKE_SOUNDS", 1 )
+        Config.OnPoliceAlert(Lang:t("general.paleto_robbery_alert"))
+    elseif type == "pacific" then
+        PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
+        Wait(100)
+        PlaySoundFrontend( -1, "Beep_Red", "DLC_HEIST_HACKING_SNAKE_SOUNDS", 1 )
+        Wait(100)
+        PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
+        Wait(100)
+        PlaySoundFrontend( -1, "Beep_Red", "DLC_HEIST_HACKING_SNAKE_SOUNDS", 1 )
+        Config.OnPoliceAlert(Lang:t("general.pacific_robbery_alert"))
+    end
+    local transG = 250
+    local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
+    SetBlipSprite(blip, 487)
+    SetBlipColour(blip, 4)
+    SetBlipDisplay(blip, 4)
+    SetBlipAlpha(blip, transG)
+    SetBlipScale(blip, 1.2)
+    SetBlipFlashes(blip, true)
+    BeginTextCommandSetBlipName('STRING')
+    AddTextComponentString(Lang:t("general.bank_robbery_police_call"))
+    EndTextCommandSetBlipName(blip)
+    while transG ~= 0 do
+        Wait(180 * 4)
+        transG = transG - 1
         SetBlipAlpha(blip, transG)
-        SetBlipScale(blip, 1.2)
-        SetBlipFlashes(blip, true)
-        BeginTextCommandSetBlipName('STRING')
-        AddTextComponentString("10-90: Bank Robbery")
-        EndTextCommandSetBlipName(blip)
-        while transG ~= 0 do
-            Wait(180 * 4)
-            transG = transG - 1
-            SetBlipAlpha(blip, transG)
-            if transG == 0 then
-                SetBlipSprite(blip, 2)
-                RemoveBlip(blip)
-                return
-            end
+        if transG == 0 then
+            SetBlipSprite(blip, 2)
+            RemoveBlip(blip)
+            return
         end
     end
 end)
@@ -533,12 +443,12 @@ CreateThread(function()
         bankZone:onPlayerInOut(function(inside)
             inElectronickitZone = inside
             if inside and not Config.SmallBanks[i]["isOpened"] then
-                TriggerEvent('inventory:client:requiredItems', {
+                Config.ShowRequiredItems({
                     [1] = {name = QBCore.Shared.Items["electronickit"]["name"], image = QBCore.Shared.Items["electronickit"]["image"]},
                     [2] = {name = QBCore.Shared.Items["trojan_usb"]["name"], image = QBCore.Shared.Items["trojan_usb"]["image"]}
                 }, true)
             else
-                TriggerEvent('inventory:client:requiredItems', {
+                Config.ShowRequiredItems({
                     [1] = {name = QBCore.Shared.Items["electronickit"]["name"], image = QBCore.Shared.Items["electronickit"]["image"]},
                     [2] = {name = QBCore.Shared.Items["trojan_usb"]["name"], image = QBCore.Shared.Items["trojan_usb"]["image"]}
                 }, false)
@@ -562,7 +472,7 @@ CreateThread(function()
                                 return closestBank ~= 0 and not IsDrilling and Config.SmallBanks[i]["isOpened"] and not Config.SmallBanks[i]["lockers"][k]["isOpened"] and not Config.SmallBanks[i]["lockers"][k]["isBusy"]
                             end,
                             icon = 'fa-solid fa-vault',
-                            label = 'Break Safe Open',
+                            label = Lang:t("general.break_safe_open_option_target"),
                         },
                     },
                     distance = 1.5
@@ -577,7 +487,7 @@ CreateThread(function()
                 })
                 lockerZone:onPlayerInOut(function(inside)
                     if inside and closestBank ~= 0 and not IsDrilling and Config.SmallBanks[i]["isOpened"] and not Config.SmallBanks[i]["lockers"][k]["isOpened"] and not Config.SmallBanks[i]["lockers"][k]["isBusy"] then
-                        exports['qb-core']:DrawText('[E] Break open the safe', 'right')
+                        exports['qb-core']:DrawText(Lang:t("general.break_safe_open_option_drawtext"), 'right')
                         currentLocker = k
                     else
                         if currentLocker == k then
@@ -603,7 +513,7 @@ CreateThread(function()
                             if CurrentCops >= Config.MinimumFleecaPolice then
                                 openLocker(closestBank, currentLocker)
                             else
-                                QBCore.Functions.Notify('Minimum Of '..Config.MinimumFleecaPolice..' Police Needed', "error")
+                                QBCore.Functions.Notify(Lang:t("error.minimum_police_required", {police = Config.MinimumFleecaPolice}), "error")
                             end
                             sleep = 1000
                         end

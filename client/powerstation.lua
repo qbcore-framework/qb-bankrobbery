@@ -1,5 +1,3 @@
-local QBCore = exports['qb-core']:GetCoreObject()
-
 local closestStation = 0
 local currentStation = 0
 local currentFires = {}
@@ -8,6 +6,10 @@ local requiredItems = {[1] = {name = QBCore.Shared.Items["thermite"]["name"], im
 
 -- Functions
 
+--- This will create a fire at the given coords and for the given time
+--- @param coords vector3
+--- @param time number
+--- @return nil
 local function CreateFire(coords, time)
     for _ = 1, math.random(1, 7), 1 do
         TriggerServerEvent("thermite:StartServerFire", coords, 24, false)
@@ -16,6 +18,9 @@ local function CreateFire(coords, time)
     TriggerServerEvent("thermite:StopFires")
 end
 
+--- This will load an animation dictionary so you can play an animation in that dictionary
+--- @param dict string
+--- @return nil
 local function loadAnimDict(dict)
     RequestAnimDict(dict)
     while not HasAnimDictLoaded(dict) do
@@ -24,10 +29,6 @@ local function loadAnimDict(dict)
 end
 
 -- Events
-
-RegisterNetEvent('police:SetCopCount', function(amount)
-    CurrentCops = amount
-end)
 
 RegisterNetEvent('thermite:StartFire', function(coords, maxChildren, isGasFire)
     if #(vector3(coords.x, coords.y, coords.z) - GetEntityCoords(PlayerPedId())) < 100 then
@@ -43,8 +44,8 @@ RegisterNetEvent('thermite:StartFire', function(coords, maxChildren, isGasFire)
 end)
 
 RegisterNetEvent('thermite:StopFires', function()
-    for _, v in ipairs(currentFires) do
-        RemoveScriptFire(v)
+    for i = 1, #currentFires do
+        RemoveScriptFire(currentFires[i])
     end
 end)
 
@@ -52,16 +53,14 @@ RegisterNetEvent('thermite:UseThermite', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     if closestStation ~= 0 then
-        if math.random(1, 100) <= 85 and not QBCore.Functions.IsWearingGloves() then
-            TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
-        end
+        Config.OnEvidence(pos, 85)
         local dist = #(pos - Config.PowerStations[closestStation].coords)
         if dist < 1.5 then
             if CurrentCops >= Config.MinimumThermitePolice then
                 if not Config.PowerStations[closestStation].hit then
                     loadAnimDict("weapon@w_sp_jerrycan")
                     TaskPlayAnim(PlayerPedId(), "weapon@w_sp_jerrycan", "fire", 3.0, 3.9, 180, 49, 0, 0, 0, 0)
-                    TriggerEvent('inventory:client:requiredItems', requiredItems, false)
+                    Config.ShowRequiredItems(requiredItems, false)
                     SetNuiFocus(true, true)
                     SendNUIMessage({
                         action = "openThermite",
@@ -69,28 +68,26 @@ RegisterNetEvent('thermite:UseThermite', function()
                     })
                     currentStation = closestStation
                 else
-                    QBCore.Functions.Notify("It seems that the fuses have blown.", "error")
+                    QBCore.Functions.Notify(Lang:t("error.fuses_already_blown"), "error")
                 end
             else
-                QBCore.Functions.Notify('Minimum Of '..Config.MinimumThermitePolice..' Police Needed', "error")
+                QBCore.Functions.Notify(Lang:t("error.minium_police_required", {police = Config.MinimumThermitePolice}), "error")
             end
         end
     elseif currentThermiteGate ~= 0 then
-        if math.random(1, 100) <= 85 and not QBCore.Functions.IsWearingGloves() then
-            TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
-        end
+        Config.OnEvidence(pos, 85)
         if CurrentCops >= Config.MinimumThermitePolice then
             currentGate = currentThermiteGate
             loadAnimDict("weapon@w_sp_jerrycan")
             TaskPlayAnim(PlayerPedId(), "weapon@w_sp_jerrycan", "fire", 3.0, 3.9, -1, 49, 0, 0, 0, 0)
-            TriggerEvent('inventory:client:requiredItems', requiredItems, false)
+            Config.ShowRequiredItems(requiredItems, false)
             SetNuiFocus(true, true)
             SendNUIMessage({
                 action = "openThermite",
                 amount = math.random(5, 10),
             })
         else
-            QBCore.Functions.Notify('Minimum Of '..Config.MinimumThermitePolice..' Police Needed', "error")
+            QBCore.Functions.Notify(Lang:t("error.minium_police_required", {police = Config.MinimumThermitePolice}), "error")
         end
     end
 end)
@@ -126,19 +123,18 @@ RegisterNUICallback('thermitesuccess', function(_, cb)
             local time = 3
             local coords = GetEntityCoords(PlayerPedId())
             while time > 0 do
-                QBCore.Functions.Notify("Thermite is going off in " .. time .. "..")
+                QBCore.Functions.Notify(Lang:t("general.thermite_detonating_in_seconds", {time = time}))
                 Wait(1000)
                 time -= 1
             end
             local randTime = math.random(10000, 15000)
             CreateFire(coords, randTime)
             if currentStation ~= 0 then
-                QBCore.Functions.Notify("The fuses are broken", "success")
+                QBCore.Functions.Notify(Lang:t("success.fuses_are_blown"), "success")
                 TriggerServerEvent("qb-bankrobbery:server:SetStationStatus", currentStation, true)
-                currentStation = 0
             elseif currentGate ~= 0 then
-                QBCore.Functions.Notify("The door is open", "success")
-                TriggerServerEvent('qb-doorlock:server:updateState', currentGate, false, false, false, true, false, false)
+                QBCore.Functions.Notify(Lang:t("success.door_has_opened"), "success")
+                Config.DoorlockAction(currentGate, false)
                 currentGate = 0
             end
         end
@@ -165,11 +161,11 @@ CreateThread(function()
         stationZone:onPlayerInOut(function(inside)
             if inside and not Config.PowerStations[k].hit then
                 closestStation = k
-                TriggerEvent('inventory:client:requiredItems', requiredItems, true)
+                Config.ShowRequiredItems(requiredItems, true)
             else
                 if closestStation == k then
                     closestStation = 0
-                    TriggerEvent('inventory:client:requiredItems', requiredItems, false)
+                    Config.ShowRequiredItems(requiredItems, false)
                 end
             end
         end)
