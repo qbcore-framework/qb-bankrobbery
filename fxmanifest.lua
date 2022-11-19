@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 
 description 'Bankrobbery for QB-Core'
-version '1.2.0'
+version '1.3.0'
 
 ui_page 'html/index.html'
 
