@@ -1,0 +1,36 @@
+local Translations = {
+    success = {
+        success_message = "Erfolgreich",
+        fuses_are_blown = "Die Sicherungen sind durchgebrannt",
+        door_has_opened = "Die Tür hat sich geöffnet"
+    },
+    error = {
+        cancel_message = "Abgebrochen",
+        safe_too_strong = "Sieht aus, als wäre das Schloss des Tresors zu stark...",
+        missing_item = "Du benötigst einen fehlenden Gegenstand...",
+        bank_already_open = "Die Bank ist schon geöffnet...",
+        minimum_police_required = "Mindestens %{police} Polizisten erforderlich",
+        security_lock_active = "Die Sicherheitsverriegelung ist aktiv, das Öffnen der Tür ist derzeit nicht möglich",
+        wrong_type = "%{receiver} hat nicht den richtigen Typ für das Argument '%{argument}'\nreceived type: %{receivedType}\nreceived value: %{receivedValue}\n expected type: %{expected}",
+        fuses_already_blown = "Die Sicherungen sind bereits durchgebrannt...",
+        event_trigger_wrong = "%{event}%{extraInfo} wurde ausgelöst, als einige Bedingungen nicht erfüllt waren, Quelle: %{source}",
+        missing_ignition_source = "Es fehlt eine Zündquelle"
+    },
+    general = {
+        breaking_open_safe = "Den Tresor aufbrechen...",
+        connecting_hacking_device = "Anschließen des Hackergeräts...",
+        fleeca_robbery_alert = "Versuchter Banküberfall in Fleeca ",
+        paleto_robbery_alert = "Versuchter Raubüberfall auf die Blain County Savings Bank",
+        pacific_robbery_alert = "Pacific Standard Bank robbery attempt",
+        break_safe_open_option_target = "Tresor öffnen",
+        break_safe_open_option_drawtext = "[E] Den Tresor aufbrechen",
+        validating_bankcard = "Karte validieren...",
+        thermite_detonating_in_seconds = "Thermit explodiert in %{time} Sekunde(n)",
+        bank_robbery_police_call = "10-90: Bank Raub"
+    }
+}
+
+Lang = Lang or Locale:new({
+    phrases = Translations,
+    warnOnMissing = true
+})
