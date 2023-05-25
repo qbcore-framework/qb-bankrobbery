@@ -7,7 +7,7 @@ version '1.3.0'
 ui_page 'html/index.html'
 
 shared_scripts {
-    'sh_config.lua', -- Shared config
+    'shared/sh_config.lua', -- Shared config
     '@qb-core/shared/locale.lua',
     'locales/en.lua',
     'locales/*.lua'
@@ -16,7 +16,7 @@ shared_scripts {
 client_scripts {
     '@PolyZone/client.lua',
     '@PolyZone/BoxZone.lua',
-    'cl_config.lua', -- Client config
+    'shared/cl_config.lua', -- Client config
     'client/fleeca.lua',
     'client/pacific.lua',
     'client/powerstation.lua',
@@ -25,7 +25,7 @@ client_scripts {
 }
 
 server_scripts {
-    'sv_config.lua', -- Server config
+    'shared/sv_config.lua', -- Server config
     'server/main.lua'
 }
 
