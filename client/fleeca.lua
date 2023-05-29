@@ -15,11 +15,13 @@ local currentLocker = 0
 --- @return nil
 local function ResetBankDoors()
     for k in pairs(Config.SmallBanks) do
-        local object = GetClosestObjectOfType(Config.SmallBanks[k]["coords"]["x"], Config.SmallBanks[k]["coords"]["y"], Config.SmallBanks[k]["coords"]["z"], 5.0, Config.SmallBanks[k]["object"], false, false, false)
+        local mainDoor = GetClosestObjectOfType(Config.SmallBanks[k]["coords"]["x"], Config.SmallBanks[k]["coords"]["y"], Config.SmallBanks[k]["coords"]["z"], 5.0, Config.SmallBanks[k]["object"], false, false, false)
+        local secondDoor = GetClosestObjectOfType(Config.SmallBanks[k]["coords"]["x"], Config.SmallBanks[k]["coords"]["y"], Config.SmallBanks[k]["coords"]["z"], 5.0, Config.SmallBanks[k]["second_door"]["object"], false, false, false)
         if not Config.SmallBanks[k]["isOpened"] then
-            SetEntityHeading(object, Config.SmallBanks[k]["heading"].closed)
+            SetEntityHeading(mainDoor, Config.SmallBanks[k]["heading"].closed)
+            FreezeEntityPosition(secondDoor, true)
         else
-            SetEntityHeading(object, Config.SmallBanks[k]["heading"].open)
+            SetEntityHeading(mainDoor, Config.SmallBanks[k]["heading"].open)
         end
     end
     if not Config.BigBanks["paleto"]["isOpened"] then
@@ -92,6 +94,13 @@ local function OnHackDone(success)
     Config.OnHackDone(success, closestBank)
 end
 
+--- This is triggered once the hack at a small bank second door is done
+--- @param success boolean
+--- @return nil
+local function OnSecondHackDone(success)
+    Config.OnSecondHackDone(success, closestBank)
+end
+
 --- This will load an animation dictionary so you can play an animation in that dictionary
 --- @param dict string
 --- @return nil
@@ -116,6 +125,60 @@ local function OpenBankDoor(bankId)
                 Wait(10)
             end
         end)
+        PrepareSecondBankDoor(bankId)
+    end
+end
+
+--- This will open the second bank door of any small bank
+--- @param bankId number
+--- @return nil
+function PrepareSecondBankDoor(bankId)
+    local object = GetClosestObjectOfType(Config.SmallBanks[bankId]["coords"]["x"], Config.SmallBanks[bankId]["coords"]["y"], Config.SmallBanks[bankId]["coords"]["z"], 5.0, Config.SmallBanks[bankId]["second_door"]["object"], false, false, false)
+    if object ~= 0 then
+        CreateThread(function()
+            while Config.SmallBanks[bankId]["isOpened"] do
+                if (GetDistanceBetweenCoords(GetEntityCoords(PlayerPedId()), GetEntityCoords(object))) <= 2.3 then
+                    if IsControlJustPressed(0, 38) then
+                        local hasItem = Config.HasItem({"trojan_usb", "electronickit"})
+                        if hasItem then
+                            Config.ShowRequiredItems({
+                                [1] = {name = QBCore.Shared.Items["electronickit"]["name"], image = QBCore.Shared.Items["electronickit"]["image"]},
+                                [2] = {name = QBCore.Shared.Items["trojan_usb"]["name"], image = QBCore.Shared.Items["trojan_usb"]["image"]}
+                            }, false)
+                            loadAnimDict("anim@gangops@facility@servers@")
+                            TaskPlayAnim(ped, 'anim@gangops@facility@servers@', 'hotwire', 3.0, 3.0, -1, 1, 0, false, false, false)
+                            QBCore.Functions.Progressbar("hack_gate", Lang:t("general.connecting_hacking_device"), math.random(5000, 10000), false, true, {
+                                disableMovement = true,
+                                disableCarMovement = true,
+                                disableMouse = false,
+                                disableCombat = true,
+                            }, {}, {}, {}, function() -- Done
+                                StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
+                                TriggerServerEvent('qb-bankrobbery:server:removeElectronicKit')
+                                TriggerEvent("mhacking:show")
+                                TriggerEvent("mhacking:start", math.random(6, 7), math.random(12, 15), OnSecondHackDone)
+                            end, function() -- Cancel
+                                StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
+                                QBCore.Functions.Notify(Lang:t("error.cancel_message"), "error")
+                            end)
+                        else
+                            QBCore.Functions.Notify(Lang:t("error.missing_item"), "error")
+                        end
+                    end
+                end
+                Wait(1)
+            end
+        end)
+    end
+end
+
+--- This will open the second bank door of any small bank
+--- @param bankId number
+--- @return nil
+function OpenSecondBankDoor(bankId)
+    local object = GetClosestObjectOfType(Config.SmallBanks[bankId]["coords"]["x"], Config.SmallBanks[bankId]["coords"]["y"], Config.SmallBanks[bankId]["coords"]["z"], 5.0, Config.SmallBanks[bankId]["second_door"]["object"], false, false, false)
+    if object ~= 0 then
+        FreezeEntityPosition(object, false)
     end
 end
 

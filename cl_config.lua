@@ -25,6 +25,16 @@ function Config.OnHackDone(success, bank)
     TriggerServerEvent('qb-bankrobbery:server:setBankState', bank)
 end
 
+--- This function will be triggered once the hack is done
+--- @param success boolean
+--- @param bank number | string
+--- @return nil
+function Config.OnSecondHackDone(success, bank)
+    TriggerEvent('mhacking:hide')
+    if not success then return end
+    OpenSecondBankDoor(bank)
+end
+
 --- This will be triggered once an action happens that can drop evidence
 --- @param pos vector3
 --- @param chance number

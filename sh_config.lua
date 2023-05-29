@@ -82,6 +82,9 @@ Config.SmallBanks = {
             closed = 250.0,
             open = 160.0
         },
+        ["second_door"] = {
+            ["object"] = `v_ilev_gb_vaubar`,
+        },
         ["camId"] = 21,
         ["isOpened"] = false,
         ["lockers"] = {
@@ -135,6 +138,9 @@ Config.SmallBanks = {
         ["heading"] = {
             closed = 250.0,
             open = 160.0
+        },
+        ["second_door"] = {
+            ["object"] = `v_ilev_gb_vaubar`,
         },
         ["camId"] = 22,
         ["isOpened"] = false,
@@ -190,6 +196,9 @@ Config.SmallBanks = {
             closed = 250.0,
             open = 160.0
         },
+        ["second_door"] = {
+            ["object"] = `v_ilev_gb_vaubar`,
+        },
         ["camId"] = 23,
         ["isOpened"] = false,
         ["lockers"] = {
@@ -244,6 +253,9 @@ Config.SmallBanks = {
             closed = 296.863,
             open = 206.863
         },
+        ["second_door"] = {
+            ["object"] = `v_ilev_gb_vaubar`,
+        },
         ["camId"] = 24,
         ["isOpened"] = false,
         ["lockers"] = {
@@ -293,10 +305,13 @@ Config.SmallBanks = {
         ["label"] = "Great Ocean Hwy",
         ["coords"] = vector3(-2956.55, 481.74, 15.69),
         ["alarm"] = true,
-        ["object"] = `v_ilev_gb_vauldr`,
+        ["object"] = `hei_prop_heist_sec_door`,
         ["heading"] = {
             closed = 357.542,
             open = 267.542
+        },
+        ["second_door"] = {
+            ["object"] = `v_ilev_gb_vaubar`,
         },
         ["camId"] = 25,
         ["isOpened"] = false,
@@ -351,6 +366,9 @@ Config.SmallBanks = {
         ["heading"] = {
             closed = -270.542,
             open = -370.542
+        },
+        ["second_door"] = {
+            ["object"] = `v_ilev_gb_vaubar`,
         },
         ["camId"] = 25,
         ["isOpened"] = false,
