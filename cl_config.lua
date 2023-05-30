@@ -1,6 +1,7 @@
 Config = Config or {}
 
 Config.UseTarget = GetConvar('UseTarget', 'false') == 'true' -- Use qb-target interactions (don't change this, go to your server.cfg and add `setr UseTarget true` to use this and just that from true to false or the other way around)
+Config.EnableSecondDoorHack = true -- Enable the second door for Fleeca banks only!
 
 -- This is the handler for the cop count, you can change this to anything you want as this is by default the qb-policejob event
 RegisterNetEvent('police:SetCopCount', function(amount)

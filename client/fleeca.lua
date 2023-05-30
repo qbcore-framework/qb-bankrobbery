@@ -125,7 +125,9 @@ local function OpenBankDoor(bankId)
                 Wait(10)
             end
         end)
-        PrepareSecondBankDoor(bankId)
+        if Config.EnableSecondDoorHack then
+            PrepareSecondBankDoor(bankId)
+        end
     end
 end
 
