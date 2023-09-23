@@ -382,7 +382,7 @@ RegisterNetEvent('qb-bankrobbery:client:robberyCall', function(type, coords)
     SetBlipScale(blip, 1.2)
     SetBlipFlashes(blip, true)
     BeginTextCommandSetBlipName('STRING')
-    AddTextComponentString(Lang:t("general.bank_robbery_police_call"))
+    AddTextComponentSubstringPlayerName(Lang:t("general.bank_robbery_police_call"))
     EndTextCommandSetBlipName(blip)
     while transG ~= 0 do
         Wait(180 * 4)
