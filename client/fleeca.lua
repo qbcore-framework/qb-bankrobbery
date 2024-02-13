@@ -85,13 +85,6 @@ local function OpenPacificDoor()
     end
 end
 
---- This is triggered once the hack at a small bank is done
---- @param success boolean
---- @return nil
-local function OnHackDone(success)
-    Config.OnHackDone(success, closestBank)
-end
-
 --- This will load an animation dictionary so you can play an animation in that dictionary
 --- @param dict string
 --- @return nil
@@ -267,8 +260,10 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
                         }, {}, {}, {}, function() -- Done
                             StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
                             TriggerServerEvent('qb-bankrobbery:server:removeElectronicKit')
-                            TriggerEvent("mhacking:show")
-                            TriggerEvent("mhacking:start", math.random(6, 7), math.random(12, 15), OnHackDone)
+                            local success = exports['qb-minigames']:Hacking(5, 30) -- code block size & seconds to solve
+                            if success then
+                                TriggerServerEvent('qb-bankrobbery:server:setBankState', closestBank)
+                            end
                             if copsCalled or not Config.SmallBanks[closestBank]["alarm"] then return end
                             TriggerServerEvent("qb-bankrobbery:server:callCops", "small", closestBank, pos)
                             copsCalled = true
