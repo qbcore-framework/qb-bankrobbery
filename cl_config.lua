@@ -15,16 +15,6 @@ function Config.DoorlockAction(doorId, setLocked)
     TriggerServerEvent('qb-doorlock:server:updateState', doorId, setLocked, false, false, true, false, false)
 end
 
---- This function will be triggered once the hack is done
---- @param success boolean
---- @param bank number | string
---- @return nil
-function Config.OnHackDone(success, bank)
-    TriggerEvent('mhacking:hide')
-    if not success then return end
-    TriggerServerEvent('qb-bankrobbery:server:setBankState', bank)
-end
-
 --- This will be triggered once an action happens that can drop evidence
 --- @param pos vector3
 --- @param chance number

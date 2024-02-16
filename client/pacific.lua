@@ -5,13 +5,6 @@ local copsCalled = false
 
 -- Functions
 
---- This will be triggered once the hack in the pacific bank is done
---- @param success boolean
---- @return nil
-local function OnHackPacificDone(success)
-    Config.OnHackDone(success, "pacific")
-end
-
 --- This will load an animation dictionary so you can play an animation in that dictionary
 --- @param dict string
 --- @return nil
@@ -87,8 +80,10 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
                         }, {}, {}, {}, function() -- Done
                             TriggerServerEvent('qb-bankrobbery:server:removeElectronicKit')
                             StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
-                            TriggerEvent("mhacking:show")
-                            TriggerEvent("mhacking:start", math.random(5, 9), math.random(10, 15), OnHackPacificDone)
+                            local success = exports['qb-minigames']:Hacking(5, 30) -- code block size & seconds to solve
+                            if success then
+                                TriggerServerEvent('qb-bankrobbery:server:setBankState', 'pacific')
+                            end
                             if copsCalled or not Config.BigBanks["pacific"]["alarm"] then return end
                             TriggerServerEvent("qb-bankrobbery:server:callCops", "pacific", 0, pos)
                             copsCalled = true
