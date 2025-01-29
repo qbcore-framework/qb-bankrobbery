@@ -147,17 +147,12 @@ RegisterNetEvent('qb-bankrobbery:server:setBankState', function(bankId)
 end)
 
 RegisterNetEvent('qb-bankrobbery:server:setLockerState', function(bankId, lockerId, state, bool)
-    if bankId == 'paleto' or bankId == 'pacific' then
-        if #(GetEntityCoords(GetPlayerPed(source)) - Config.BigBanks[bankId]['lockers'][lockerId]['coords']) > 2.5 then
-            return error(Lang:t('error.event_trigger_wrong', { event = 'qb-bankrobbery:server:setLockerState', extraInfo = ' (' .. bankId .. ') ', source = source }))
-        end
-        Config.BigBanks[bankId]['lockers'][lockerId][state] = bool
-    else
-        if #(GetEntityCoords(GetPlayerPed(source)) - Config.SmallBanks[bankId]['lockers'][lockerId]['coords']) > 2.5 then
-            return error(Lang:t('error.event_trigger_wrong', { event = 'qb-bankrobbery:server:setLockerState', extraInfo = ' (smallbank ' .. bankId .. ') ', source = source }))
-        end
-        Config.SmallBanks[bankId]['lockers'][lockerId][state] = bool
+    local bankType = Config.BigBanks[bankId] and 'BigBanks' or 'SmallBanks'
+    local extraInfo = (' (%s' .. bankId .. ') '):format(bankType == 'SmallBanks' and 'smallbank' or '')
+    if #(GetEntityCoords(GetPlayerPed(source)) - Config[bankType][bankId]['lockers'][lockerId]['coords']) > 2.5 then
+        return error(Lang:t('error.event_trigger_wrong', { event = 'qb-bankrobbery:server:setLockerState', extraInfo = extraInfo, source = source }))
     end
+    Config[bankType][bankId]['lockers'][lockerId][state] = bool
     TriggerClientEvent('qb-bankrobbery:client:setLockerState', -1, bankId, lockerId, state, bool)
 end)
 
